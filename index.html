@@ -55,7 +55,7 @@ table {
 #states {
   fill: #aaa;
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
 }
 
 #states .active {
@@ -78,77 +78,42 @@ var width = window.innerWidth,
     height = window.innerHeight-20,
     centered;
 
-var projection = d3.geo.transverseMercator()
-    .rotate([74 + 30 / 60, -38 - 50 / 60]);
+var scale=183300;
+var dx=-53523.6;
+var dy=13034;
 
+var projection = d3.geo.albersUsa()
+	.scale(scale)
+	.translate([dx,dy]);
 
 var path = d3.geo.path().projection(projection);
-    
+
 var zoom = d3.behavior.zoom()
     .translate(projection.translate())
     .scale(projection.scale())
-    .scaleExtent([height, 8 * height])
+    .scaleExtent([scale, scale*4])
     .on("zoom", zoom);
-    
+
 var svg = d3.select("body").append("svg")
 	.classed("map",true)
     .attr("width", width)
     .attr("height", height);
 
-svg.append("rect")
-    .attr("class", "background")
-    .attr("width", width)
-    .attr("height", height)
-    .on("click", click);
-
 var g = svg.append("g")
     .attr("id", "states")
     .call(zoom);
 
-//var b = d3.geo.bounds(states);
-/*var b = d3.geo.bounds(zipcodes);
-  s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height)*100,
-  t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
-
-console.log(s);
-console.log(t);
-
-console.log(d3.geo.bounds(states));
-console.log(d3.geo.bounds(zipcodes));
-*/
-
-/*projection
-  .scale(s)
-  .translate(t);*/
-
-//console.log(b);
-/*
-projection
-  .scale(1)
-  .translate([0, 0]);
-
-var b = d3.geo.bounds(states),
-  s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
-  t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
-
-projection
-  .scale(s)
-  .translate(t);
-*/
-
-projection
-  .scale(180000)
-  .translate([-800,6400]);
-
+/*g.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height);*/
 
 g.selectAll("path")
-//	  .data(states.features)
 	  .data(zipcodes.features)
 	.enter().append("path")
 	  .attr("d", path)
 	  .on("click", click)
 	  .on("mouseover",mouseover);
-
 
 function mouseover(d){
 	var obj=d;
@@ -158,13 +123,34 @@ function mouseover(d){
 }
 
 function click(d) {
+  var centroid = path.centroid(d),
+      translate = projection.translate();
+
+  projection.translate([
+    translate[0] - centroid[0] + width / 2,
+    translate[1] - centroid[1] + height / 2
+  ]);
+
+  zoom.translate(projection.translate());
+
+  states.selectAll("path").transition()
+      .duration(1000)
+      .attr("d", path);
+}
+
+function zoom() {
+  projection.translate(d3.event.translate).scale(d3.event.scale);
+  g.selectAll("path").attr("d", path);
+}
+
+function click(d) {
   var x, y, k;
 
   if (d && centered !== d) {
     var centroid = path.centroid(d);
     x = centroid[0];
     y = centroid[1];
-    k = 4;
+    k = 1;
     centered = d;
   } else {
     x = width / 2;
@@ -182,17 +168,13 @@ function click(d) {
       .style("stroke-width", 1.5 / k + "px");
 }
 
-function zoom() {
-	console.log("called!");
-	console.log(d3.event.scale);
-	console.log(d3.event.translate);
-	//projection.translate(d3.event.translate);//.scale(d3.event.scale);
-	//g.selectAll("path").attr("d", path);
-}
 
 function resize(){
-	$(".map").width(window.innerWidth);
-	$(".map").height(window.innerHeight-25);
+	width=window.innerWidth;
+	height=window.innerHeight-25;
+
+	$(".map").width(width);
+	$(".map").height(height);
 }
 
 </script>
