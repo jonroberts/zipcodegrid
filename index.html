@@ -1,10 +1,200 @@
+<!DOCTYPE html>
 <html>
-<head>
-<title>Super Awesome ZipCode Data Mapper</title>
+<meta charset="utf-8">
+<style>
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
 
-</head>
-<body>
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+#states {
+  fill: #aaa;
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+#states .active {
+  fill: orange;
+}
+
+</style>
+<body onresize="resize()" onload="resize()">
+
+<div style="width: 100%; height:20px; text-align: right;"><span id="tag" style="margin-right:10px;">Test</span></div>
+ 
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="./data/us-states.js"></script>
+<script src="./data/zipcodes.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script>
+
+var width = window.innerWidth,
+    height = window.innerHeight-20,
+    centered;
+
+var projection = d3.geo.transverseMercator()
+    .rotate([74 + 30 / 60, -38 - 50 / 60]);
 
 
+var path = d3.geo.path().projection(projection);
+    
+var zoom = d3.behavior.zoom()
+    .translate(projection.translate())
+    .scale(projection.scale())
+    .scaleExtent([height, 8 * height])
+    .on("zoom", zoom);
+    
+var svg = d3.select("body").append("svg")
+	.classed("map",true)
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", click);
+
+var g = svg.append("g")
+    .attr("id", "states")
+    .call(zoom);
+
+//var b = d3.geo.bounds(states);
+/*var b = d3.geo.bounds(zipcodes);
+  s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height)*100,
+  t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+console.log(s);
+console.log(t);
+
+console.log(d3.geo.bounds(states));
+console.log(d3.geo.bounds(zipcodes));
+*/
+
+/*projection
+  .scale(s)
+  .translate(t);*/
+
+//console.log(b);
+/*
+projection
+  .scale(1)
+  .translate([0, 0]);
+
+var b = d3.geo.bounds(states),
+  s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+  t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+projection
+  .scale(s)
+  .translate(t);
+*/
+
+projection
+  .scale(180000)
+  .translate([-800,6400]);
+
+
+g.selectAll("path")
+//	  .data(states.features)
+	  .data(zipcodes.features)
+	.enter().append("path")
+	  .attr("d", path)
+	  .on("click", click)
+	  .on("mouseover",mouseover);
+
+
+function mouseover(d){
+	var obj=d;
+	g.selectAll("path")
+	  .classed("active", function(d) { return d === obj; });
+	$("#tag").text(d.id);
+}
+
+function click(d) {
+  var x, y, k;
+
+  if (d && centered !== d) {
+    var centroid = path.centroid(d);
+    x = centroid[0];
+    y = centroid[1];
+    k = 4;
+    centered = d;
+  } else {
+    x = width / 2;
+    y = height / 2;
+    k = 1;
+    centered = null;
+  }
+
+  g.selectAll("path")
+      .classed("active", centered && function(d) { return d === centered; });
+
+  g.transition()
+      .duration(1000)
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+      .style("stroke-width", 1.5 / k + "px");
+}
+
+function zoom() {
+	console.log("called!");
+	console.log(d3.event.scale);
+	console.log(d3.event.translate);
+	//projection.translate(d3.event.translate);//.scale(d3.event.scale);
+	//g.selectAll("path").attr("d", path);
+}
+
+function resize(){
+	$(".map").width(window.innerWidth);
+	$(".map").height(window.innerHeight-25);
+}
+
+</script>
 </body>
 </html>
