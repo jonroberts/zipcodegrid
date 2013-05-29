@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+#states {
+  fill: #aaa;
+  stroke: #fff;
+  stroke-width: 1px;
+}
+
+#states .active {
+  fill: orange;
+}
+
+</style>
+<body onresize="resize()" onload="resize()">
+
+<div style="width: 100%; height:20px; text-align: right;"><span id="tag" style="margin-right:10px;">Test</span></div>
+ 
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="./data/us-states.js"></script>
+<script src="./data/zipcodes.js"></script>
+<script src="./data/ZipCodeElecPop.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script>
+
+var width = window.innerWidth,
+    height = window.innerHeight-20,
+    centered;
+
+var scale=183300;
+/*var dx=-53523.6;
+var dy=13034;*/
+
+var projection = d3.geo.albersUsa();
+
+projection.prototype.origin=function([latitude,longitude]){
+	this.center=
+}
+	projection.origin([73.98,40.71]);
+	//.scale(scale);
+	//.translate([dx,dy]);
+
+var path = d3.geo.path().projection(projection);
+
+var zoom = d3.behavior.zoom()
+    .translate(projection.translate())
+    .scale(projection.scale())
+    .scaleExtent([scale, scale*4])
+    .on("zoom", zoom);
+
+var svg = d3.select("body").append("svg")
+	.classed("map",true)
+    .attr("width", width)
+    .attr("height", height);
+
+var g = svg.append("g")
+    .attr("id", "states")
+    .call(zoom);
+
+/*g.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height);*/
+
+g.selectAll("path")
+	  .data(states.features)
+	.enter().append("path")
+	  .attr("d", path)
+	  .on("click", click)
+	  .on("mouseover",mouseover);
+
+
+function mouseover(d){
+	var obj=d;
+	g.selectAll("path")
+	  .classed("active", function(d) { return d === obj; });
+	//$("#tag").text(d.id);
+	$("#tag").text(d.id+": "+elec_pop[d.id]["E_kwh"]);
+	
+}
+
+function click(d) {
+  var centroid = path.centroid(d),
+      translate = projection.translate();
+
+  projection.translate([
+    translate[0] - centroid[0] + width / 2,
+    translate[1] - centroid[1] + height / 2
+  ]);
+
+  zoom.translate(projection.translate());
+
+  states.selectAll("path").transition()
+      .duration(1000)
+      .attr("d", path);
+}
+
+function zoom() {
+  projection.translate(d3.event.translate).scale(d3.event.scale);
+  g.selectAll("path").attr("d", path);
+}
+
+function click(d) {
+  var x, y, k;
+
+  if (d && centered !== d) {
+    var centroid = path.centroid(d);
+    x = centroid[0];
+    y = centroid[1];
+    k = 1;
+    centered = d;
+  } else {
+    x = width / 2;
+    y = height / 2;
+    k = 1;
+    centered = null;
+  }
+
+  g.selectAll("path")
+      .classed("active", centered && function(d) { return d === centered; });
+
+  g.transition()
+      .duration(1000)
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+      .style("stroke-width", 1.5 / k + "px");
+}
+
+
+function resize(){
+	width=window.innerWidth;
+	height=window.innerHeight-25;
+
+	$(".map").width(width);
+	$(".map").height(height);
+}
+
+</script>
+</body>
+</html>
