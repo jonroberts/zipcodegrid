@@ -1,22 +1,26 @@
 
-var maxratio=0;
+var norms={"kwh_by_pop":0,"kwh_by_house":0,"kwh_by_household_income":0,"median_income":0,"pop":0};
 function initData(){
 	for(var i in zipcodes.features){
-		
 		var zip=zipcodes.features[i];
-		var id=zip.id;
+		var id="NY"+zip.id;
 		if(id in elec_pop){
-			zip["pop"]=elec_pop[id]["pop"];
-			zip["num_house"]=elec_pop[id]["num_house"];
-			zip["E_kwh"]=elec_pop[id]["E_kwh"];
-			zip["E_GJ"]=elec_pop[id]["E_GJ"];
-			maxratio=(maxratio<zip.E_kwh/zip.pop)?zip.E_kwh/zip.pop:maxratio;
+			for(var key in elec_pop[id]){zip[key]=elec_pop[id][key];
+			}
+			for(var key in norms){norms[key]=(norms[key]<zip[key])?zip[key]:norms[key];}
 		}
 		else{
 			zip["pop"]=0;
 			zip["num_house"]=0;
 			zip["E_kwh"]=0;
 			zip["E_GJ"]=0;
+			zip["median_income"]=0;
+			zip["kwh_by_pop"]=0;
+			zip["kwh_by_house"]=0;
+			zip["kwh_by_household_income"]=0;
+			zip["rank_kwh_pop"]=0;
+			zip["rank_kwh_house"]=0;
+			zip["rank_kwh_household_income"]=0;
 		}
 	}
 }
@@ -66,15 +70,23 @@ var svg = d3.select("body").append("svg")
 
 var g = svg.append("g")
     .attr("id", "states")
-    //.call(zoom)
 	.call(drag);
+
+function getColor(d,key){
+	var ratio=d[key]*(255/norms[key]);
+	if(ratio>0){
+		return d3.hsl(255-ratio,0.4,0.5);
+	}else{
+		return "black";
+	}
+}
 
 g.selectAll("path")
 	  .data(zipcodes.features)
 	.enter().append("path")
 	  .attr("d", path)
 	  .attr("id", function(d){return "NY"+d.id;})
-	  .style("fill",function(d){var ratio=d.E_kwh/d.pop*(255/maxratio); if(ratio>0){return d3.hsl(255-ratio,0.4,0.5);}else{return "black";}})
+	  .style("fill",function(d){return getColor(d,"kwh_by_pop")})
 	  .style("opacity",0.7)
 	  .on("click", click)
 	  .on("mouseover",mouseover)
@@ -154,14 +166,8 @@ function click(d) {
     centered = null;
   }
   if(centered === d){
-	  $("#sidebar > .title").html("NY"+d.id);
-	  var content="<p>"
-	  if(d.id in neighborhoods){content+="<p/><p>"+neighborhoods[d.id]["neighborhood"];}
-	  if(d.pop>0){content+="<p/><p>"+(d.E_kwh/(d.pop)).toFixed(0)+" kwh/person";}  
-	  content+="</p>";
-	  $("#sidebar > .content").html(content);
-	  
-	  showSidebar();
+	setSidebarContent(d);
+	showSidebar();
   }
   else{
 	  hideSidebar();
@@ -178,14 +184,33 @@ function click(d) {
 function showSidebar(){
 	d3.select("#sidebar")
 		.transition().duration(1000)
-		.style("margin-left","-1px");
+		.style("margin-left","20px");
 }
 function hideSidebar(){
 	d3.select("#sidebar")
 		.transition().duration(1000)
-		.style("margin-left","-255px");
+		.style("margin-left","-325px");
 }
-
+var suffix = function(n) {
+	var d = (n|0)%100;
+	return d > 3 && d < 21 ? 'th' : ['th', 'st', 'nd', 'rd'][d%10] || 'th';
+};
+function setSidebarContent(d){
+	
+	$("#sidebar > .title").html("NY"+d.id);
+	var content="<p>"
+	if(d.id in neighborhoods){content+="<p/><p>"+neighborhoods[d.id]["neighborhood"];}
+	if(d.pop>0){
+		for(var key in d){
+		console.log(key);}
+		content+="<p/><p>"+(d.kwh_by_pop).toFixed(0)+" kwh/person";
+		content+="<p/><p>"+(d.rank_kwh_pop).toFixed(0)+suffix(d.rank_kwh_pop)+" highest energy use per person out of 175 zipcodes";
+		content+="<p/><p>"+(d.kwh_by_house).toFixed(0)+" kwh/household";
+		content+="<p/><p>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+" highest energy use per household out of 175 zipcodes";
+	}  
+	content+="</p>";
+	$("#sidebar > .content").html(content);
+}
 
 function resize(){
 	width=window.innerWidth;
