@@ -72,9 +72,10 @@ function analyse_usage(form){
 			else{
 				text="";
 				for(var key in result){
-					text+="<p>"+key+":\t"+JSON.stringify(result[key])+"</p>";
+					//text+="<p>"+key+":\t"+JSON.stringify(result[key])+"</p>";
 				}
 				$("#energy_results").html(text);
+				fill_report_card(result);
 			}
 		},
 		error:function(xhr, ajaxOptions, thrownError){
@@ -84,5 +85,62 @@ function analyse_usage(form){
 		}
 	});
 	
+}
+
+function fill_report_card(udata)
+{
+	var carddiv = document.getElementById('energy_report_card'); 
+	var zc = '#NY' + udata["zipcode"];
+	
+	var zipdata=d3.select(zc).datum();
+	var neighavg=zipdata["kwh_by_house"];
+	var neighavgcapita = zipdata["kwh_by_pop"];
+	var seasmod= udata["metric"];
+	var seasmodgrade = "Average";
+	var seasmodtext = "";
+	var seasfrac;	
+	if (seasmod < 1.0)
+	{
+		seasmodgrade = "Good";
+		seasfrac = 1.0-seasmod;
+		seasmodtext = "less";
+	}
+	else if (seasmod > 1.0)
+	{
+		seasmodgrade = "Bad";
+		seasfrac = seasmod - 1.0;
+		seasmodtext = "more";
+	}
+
+	if (seasmod > 0.9 && seasmod < 1.1)
+	{
+		seasmodgrade = "Average";
+	}
+
+	var frac = udata["annual_usage"] / neighavg;
+	var fracsign = "";
+	var savingstext='';
+
+	var savings = 0.27*(udata["annual_usage"] - neighavg);
+	
+	if (frac > 1.0)
+	{
+		frac = frac - 1.0;
+		fracsign = "more";
+		savingstext='could '
+	}
+	else
+	{
+		frac = 1.0 - frac;
+		fracsign = "less";
+		savings = savings * -1.0;
+	}
+
+	
+	carddiv.innerHTML = '<p><h3>Energy Report Card</h3><p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh (Neighborhood average: ' + Math.round(neighavg) + ' kWh)';
+	carddiv.innerHTML = carddiv.innerHTML + '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh (Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh)';
+	carddiv.innerHTML = carddiv.innerHTML + '<p>Your household uses ' + Math.round(frac*100.0) + '% ' + fracsign + ' electricity than the average in your neighborhood. You ' + savingstext + 'save $' + Math.round(savings) + ' per year!'; 
+	carddiv.innerHTML = carddiv.innerHTML + '<p>Seasonal modulation: ' + seasmodgrade + '. You use ' + Math.round(seasfrac*100) + '% ' + seasmodtext + ' electricity in the summer, relative to the winter,  compared to the U.S. average.';
+	carddiv.innerHTML = carddiv.innerHTML + '<p>Your seasonal modulation is computed by comparing your electricity usage in the summer to other seasons. If it is bad, then your home cooling is done inefficiently.'
 }
 
