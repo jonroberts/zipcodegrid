@@ -152,6 +152,7 @@ function anticlick(){
 }
 
 function click(d) {
+	$('#zip_input').blur();
 
   if (d && centered !== d) {
     var centroid = path.centroid(d);
@@ -159,7 +160,11 @@ function click(d) {
     y = centroid[1];
     k = 4;
     centered = d;
+	$("#zip_input")[0].value=d.id;
+
   } else {
+	$("#zip_input")[0].value=null;
+  
     x = width / 2;
     y = height / 2;
     k = 1;
@@ -167,10 +172,10 @@ function click(d) {
   }
   if(centered === d){
 	setSidebarContent(d);
-	showSidebar();
+	//showSidebar();
   }
   else{
-	  hideSidebar();
+	  //hideSidebar();
   }
   g.selectAll("path")
       .style("opacity", function(d){return (centered && (d===centered))?1:0.7;});
@@ -196,19 +201,25 @@ var suffix = function(n) {
 	return d > 3 && d < 21 ? 'th' : ['th', 'st', 'nd', 'rd'][d%10] || 'th';
 };
 function setSidebarContent(d){
-	
-	$("#sidebar > .title").html("NY"+d.id);
-	var content="<p>"
-	if(d.id in neighborhoods){content+="<p/><p>"+neighborhoods[d.id]["neighborhood"];}
+	if(d.pop==0){$("#sidebar > .title").html("Nobody lives here!");}
+	else if(d.id in neighborhoods){	$("#sidebar > .title").html(neighborhoods[d.id]["neighborhood"]);}
+	else{
+		$("#sidebar > .title").html("");
+	}
+	var content="";
 	if(d.pop>0){
-		for(var key in d){
-		console.log(key);}
-		content+="<p/><p>"+(d.kwh_by_pop).toFixed(0)+" kwh/person";
-		content+="<p/><p>"+(d.rank_kwh_pop).toFixed(0)+suffix(d.rank_kwh_pop)+" highest energy use per person out of 175 zipcodes";
-		content+="<p/><p>"+(d.kwh_by_house).toFixed(0)+" kwh/household";
-		content+="<p/><p>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+" highest energy use per household out of 175 zipcodes";
+		
+		content+="<h4>Energy per person: "+(d.kwh_by_pop).toFixed(0)+"kwh</h4>";
+		var color="green";
+		if (d.rank_kwh_pop < 175/2.){color="red"}
+		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_pop).toFixed(0)+suffix(d.rank_kwh_pop)+"</span> of <span class='out_of'>175</span>  </p>";
+
+		content+="<h4>Energy per household: "+(d.kwh_by_house).toFixed(0)+"kwh</h4>";
+		color="green";
+		if (d.rank_kwh_house < 175/2.){color="red"}
+		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+"</span> of <span class='out_of'>175</span> </p>";
+
 	}  
-	content+="</p>";
 	$("#sidebar > .content").html(content);
 }
 

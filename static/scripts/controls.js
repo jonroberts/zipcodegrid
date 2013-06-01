@@ -1,4 +1,4 @@
-function exploreCity(){
+/*function exploreCity(){
 	$(".choice_input").css("display","none");
 }
 
@@ -7,15 +7,7 @@ function go_to_zip(){
 	$("#step2").css("display","inline");
 }
 
-function zip_chosen(input){
-	var zip_in="NY"+$("#zip_input").val();
-	if(zip_in in elec_pop){
-		zoom_to_zip(zip_in);
-	}
-	else{
-		$("#zip_entry_string").text("Please enter a valid zip");
-	}
-}
+
 
 function reset_choice_boxes(){
 	$("#step1").css("display","inline");
@@ -23,10 +15,21 @@ function reset_choice_boxes(){
 	$(".choice_input").css("display","none");
 	$("#zip_entry_string").text("Enter your Zip Code");
 	
+}*/
+
+function zip_chosen(input){
+	var zip_in="NY"+$("#zip_input").val();
+	if(zip_in in elec_pop){
+		zoom_to_zip(zip_in);
+	}
+	else{
+		$("#zip_input")[0].placeholder="Please enter a valid ZIP";
+		return false;
+	}
 }
 
 function zoom_to_zip(zip_in){
-	reset_choice_boxes();
+	//reset_choice_boxes();
 	var data=d3.select("#"+zip_in).datum();
 	click(data);
 }

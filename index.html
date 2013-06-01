@@ -90,17 +90,32 @@ div#sidebar{
 	background: rgba(255,255,255,0.95);
 	/*border: 1px solid #a4a4a4;*/
 	box-shadow: 0px 3px 10px rgba(0,0,0,0.3);
-	position: fixed;
+	position: absolute;
 	width: 275px;
-	margin-top: 20px;
-	margin-left: -325px;
+	margin-top: 100px;
+	margin-left: 20px;
 	overflow: hidden;
 }
 div#sidebar .title{
 	margin-top: 5px;
 }
 
-div.choice_box{
+div#go_to_zip{
+	padding: 10px 10px 10px 15px;
+	background: rgba(255,255,255,0.95);
+	/*border: 1px solid #a4a4a4;*/
+	box-shadow: 0px 3px 10px rgba(0,0,0,0.3);
+	position: absolute;
+	width: 275px;
+	margin-top: 20px;
+	margin-left: 20px;
+}
+div#go_to_zip input{
+	border: none;
+	width: 100%;
+}
+
+/*div.choice_box{
 	background: black;
 	height: 300px;
 	width: 300px;
@@ -144,7 +159,7 @@ div.all_page_black{
 
 #step2{
 	display: none;
-}
+}*/
 
 .form_input{
 	width: 194px;
@@ -216,6 +231,10 @@ div.switchers img{
 	cursor: hand;
 	cursor: pointer;
 }
+span.ranking, span.out_of{
+	font-weight: bolder;
+	font-size:x-large;
+}
 </style>
 </head>
 <body onresize="resize()" onload="resize()">
@@ -223,13 +242,9 @@ div.switchers img{
 <!--<div style="width: 100%; height:20px; text-align: right;"><span id="tag" style="margin-right:10px;">Test</span></div>-->
 <div class="mouseover"></div>
 
-<div id="sidebar">
-	<img src="static/imgs/cross.png" onclick="hideSidebar(); anticlick();" style="float:right; cursor: hand; cursor: pointer;"/>
-	<h3 class="title"></h3>
-	<div class="content"></div>
-</div>
 
-<div id="step1" class="choice_input">
+
+<!--<div id="step1" class="choice_input">
 	<div class="choice_box">
 		<div class="choice_upper">
 			<h2 class="text_link" onclick="exploreCity()">Explore the city</h2>
@@ -249,6 +264,23 @@ div.switchers img{
 			</form>
 		</div>
 	</div>
+</div>-->
+
+<div id="go_to_zip">
+	<form onsubmit="zip_chosen(this); return false;">
+		<input name="zip_input" id="zip_input" class="form_input" type="number" placeholder="Search for a zipcode"/>
+	</form>
+</div>
+
+<div id="sidebar">
+	<!--<img src="static/imgs/cross.png" onclick="hideSidebar(); anticlick();" style="float:right; cursor: hand; cursor: pointer;"/>-->
+	<h3 class="title">Welcome to Energy Zip</h3>
+	<div class="content">
+		<p>Click a zipcode to explore the energy use.</p>
+		<p>Click an icon at the bottom of the map to view energy use by household, population, or look at the median income per zipcode.</p> 
+		<p>Scroll down the page to see how your energy use compares to your neighborhood.</p>
+		<a href="#Comparison">How does my energy use compare?</a>
+	</div>
 </div>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -260,6 +292,7 @@ div.switchers img{
 <script src="./static/scripts/map.js"></script>
 <script src="./static/scripts/controls.js"></script>
 
+
 <div class="switchers">
 	<div onclick="switchMeasure(this,'kwh_by_pop');" class="switcher_button"><img src="./static/imgs/kwh_by_pop.png" title="Electricity use per person"/></div>
 	<div onclick="switchMeasure(this,'kwh_by_house');" class="switcher_button"><img src="./static/imgs/kwh_by_house.png" title="Electricity use per household"/></div>
@@ -268,7 +301,7 @@ div.switchers img{
 
 <div id="energy_comparison">
 <div class="pw_content">
-<h2>Compare your energy use</h2>
+<a name = "Comparison"><h2>Compare your energy use</h2></a>
 <p>How does your energy use stack up against others in your zipcode? Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your use compares.</p>
 <form onsubmit="analyse_usage(this); return false;">
 <h3>What's your zipcode?</h3><input name="zip_in" type="number" required="true" value=10012><br/>
@@ -319,9 +352,7 @@ div.switchers img{
 
 
 
-
-
-
+</script>
 
 </body>
 </html>
