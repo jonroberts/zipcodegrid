@@ -285,6 +285,7 @@ span.ranking, span.out_of{
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://demos.flesler.com/jquery/scrollTo/js/jquery.scrollTo-min.js"></script>
 <script src="./static/data/us-states.js"></script>
 <script src="./static/data/zipcodes.js"></script>
 <script src="./static/data/zip_to_neighborhood.js"></script>
@@ -304,16 +305,16 @@ span.ranking, span.out_of{
 <a name = "Comparison"><h2>Compare your energy use</h2></a>
 <p>How does your energy use stack up against others in your zipcode? Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your use compares.</p>
 <form onsubmit="analyse_usage(this); return false;">
-<h3>What's your zipcode?</h3><input name="zip_in" type="number" required="true" value=10012><br/>
+<h3>What's your zipcode?</h3><input name="zip_in" type="number" required="true" value=10023><br/>
 <h3>How many people live in your household?</h3><input name="num_in_house" type="number" required="true" value=2><br/>
 <h3>How much electricity did you use last year?</h3>
 <label class="date-label" for="Jan">Jan:</label><input class="date-input" name="Jan" placeholder="Jan">
-<label class="date-label" for="Feb">Feb:</label><input class="date-input" name="Feb"  placeholder="Feb">
-<label class="date-label" for="Mar">Mar:</label><input class="date-input" name="Mar"  placeholder="Mar">
+<label class="date-label" for="Feb">Feb:</label><input class="date-input" name="Feb"  placeholder="Feb" value=220>
+<label class="date-label" for="Mar">Mar:</label><input class="date-input" name="Mar"  placeholder="Mar" value=140>
 <label class="date-label" for="Apr">Apr:</label><input class="date-input" name="Apr"  placeholder="Apr"><br/>
 <label class="date-label" for="May">May:</label><input class="date-input" name="May"  placeholder="May">
 <label class="date-label" for="Jun">Jun:</label><input class="date-input" name="Jun"  placeholder="Jun">
-<label class="date-label" for="Jul">Jul:</label><input class="date-input" name="Jul"  placeholder="Jul">
+<label class="date-label" for="Jul">Jul:</label><input class="date-input" name="Jul"  placeholder="Jul" value=510>
 <label class="date-label" for="Aug">Aug:</label><input class="date-input" name="Aug"  placeholder="Aug"><br/>
 <label class="date-label" for="Sep">Sep:</label><input class="date-input" name="Sep"  placeholder="Sep">
 <label class="date-label" for="Oct">Oct:</label><input class="date-input" name="Oct"  placeholder="Oct">
@@ -334,7 +335,7 @@ span.ranking, span.out_of{
 <div class="footer" style="background: grey; height: 250px; border-top: 1px solid black;">
 <div class="pw_content">
 
-<h3>This is a mighty footer! Awesome links to our data sources will go here.</h3>
+<h3></h3>
 </div>
 </div>
 

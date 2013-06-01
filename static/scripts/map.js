@@ -151,6 +151,24 @@ function anticlick(){
       .style("stroke-width", 1 / k + "px");
 }
 
+function energy_conversion(kWh){
+    production = {'coal':0.137535, 'oil':0.162274, 'gas':0.224641, 'ofossil':0.006988,'nuclear':0.286643, 'hydro':0.168852, 'oren':0.013067};
+
+    units  = {'kWh':1, 'MJ':3.62, 'GJ':3.62e-3, 'Btu':3412, 'gas':0.0944, 'oil':5.89e-4, 'coal':5.35e-4};
+
+    output = {'CO2':kWh*0.828, 'CO2_tonnes':kWh*0.828/2000}; // add CO2 emission in pounds and tonnes
+
+    for (var fuel_type in production){
+        if(fuel_type in units){
+	            output[fuel_type]=kWh*production[fuel_type]*units[fuel_type];
+            }
+        else{
+	            output[fuel_type]=kWh*production[fuel_type]; // this will just return number of kWh from fuel type
+            }
+    }
+    return output;
+    }
+
 function click(d) {
 	$('#zip_input').blur();
 
@@ -218,6 +236,10 @@ function setSidebarContent(d){
 		color="green";
 		if (d.rank_kwh_house < 175/2.){color="red"}
 		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+"</span> of <span class='out_of'>175</span> </p>";
+
+		var total_kwh=d.pop*d.kwh_by_pop;
+		var energies=energy_conversion(d.kwh_by_house);
+		content+="<h3>C02 per household:</h3><h3 style='text-align:center; color:"+color+"'>"+energies.CO2.toFixed(0)+" pounds/year</h3>";
 
 	}  
 	$("#sidebar > .content").html(content);

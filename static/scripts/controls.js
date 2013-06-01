@@ -140,10 +140,10 @@ function fill_report_card(udata)
 	}
 
 	
-	carddiv.innerHTML = '<p><h3>Energy Report Card</h3><p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh (Neighborhood average: ' + Math.round(neighavg) + ' kWh)';
-	carddiv.innerHTML = carddiv.innerHTML + '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh (Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh)';
-	carddiv.innerHTML = carddiv.innerHTML + '<p>Your household uses ' + Math.round(frac*100.0) + '% ' + fracsign + ' electricity than the average in your neighborhood. You ' + savingstext + 'save $' + Math.round(savings) + ' per year!'; 
-	carddiv.innerHTML = carddiv.innerHTML + '<p>Seasonal modulation: ' + seasmodgrade + '. You use ' + Math.round(seasfrac*100) + '% ' + seasmodtext + ' electricity in the summer, relative to the winter,  compared to the U.S. average.';
-	carddiv.innerHTML = carddiv.innerHTML + '<p>Your seasonal modulation is computed by comparing your electricity usage in the summer to other seasons. If it is bad, then your home cooling is done inefficiently.'
+	carddiv.innerHTML = '<a name="report_card"><h3>Energy Report Card</h3></a><p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh (Neighborhood average: ' + Math.round(neighavg) + ' kWh)';
+	carddiv.innerHTML  += '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh (Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh)</p>';
+	carddiv.innerHTML += '<p>Your household uses ' + Math.round(frac*100.0) + '% ' + fracsign + ' electricity than the average in your neighborhood. You ' + savingstext + 'save $' + Math.round(savings) + ' per year!</p>'; 
+	carddiv.innerHTML += '<p>Seasonal modulation: ' + seasmodgrade + '. You use ' + Math.round(seasfrac*100) + '% ' + seasmodtext + ' electricity in the summer, relative to the winter,  compared to the U.S. average.</p>';
+	carddiv.innerHTML += '<p>Your seasonal modulation is computed by comparing your electricity usage in the summer to other seasons. If it is bad, then your home cooling is done inefficiently.</p>'
 }
 
