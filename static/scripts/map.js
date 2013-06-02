@@ -43,22 +43,6 @@ var projection = d3.geo.albersUsa()
 
 var path = d3.geo.path().projection(projection);
 
-/*var zoom = d3.behavior.zoom()
-    //.translate(projection.translate())
-    //.scale(projection.scale())
-    //.scaleExtent([183300, 183300*4])
-    .on("zoom", zoom);
-
-function zoom() {
-	console.log(d3.event);
-
-	//console.log(d3.event.translate);
-	//console.log(d3.event.dx);
-	return false;
-  //projection.translate(d3.event.translate).scale(d3.event.scale);
-  //g.selectAll("path").attr("d", path);
-}*/
-
 var drag = d3.behavior.drag()
         .on("drag",function(d){dragging(d);});
 
@@ -219,10 +203,10 @@ var suffix = function(n) {
 	return d > 3 && d < 21 ? 'th' : ['th', 'st', 'nd', 'rd'][d%10] || 'th';
 };
 function setSidebarContent(d){
-	if(d.pop==0){$("#sidebar > .title").html("Nobody lives here!");}
-	else if(d.id in neighborhoods){	$("#sidebar > .title").html(neighborhoods[d.id]["neighborhood"]);}
+	if(d.pop==0){$("#sidebar > div > .title").html("Nobody lives here!");}
+	else if(d.id in neighborhoods){	$("#sidebar > div > .title").html(neighborhoods[d.id]["neighborhood"]);}
 	else{
-		$("#sidebar > .title").html("");
+		$("#sidebar > div > .title").html("");
 	}
 	var content="";
 	if(d.pop>0){
@@ -242,7 +226,7 @@ function setSidebarContent(d){
 		content+="<h3>C02 per household:</h3><h3 style='text-align:center; color:"+color+"'>"+energies.CO2.toFixed(0)+" pounds/year</h3>";
 
 	}  
-	$("#sidebar > .content").html(content);
+	$("#sidebar > div > .content").html(content);
 }
 
 function resize(){

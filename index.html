@@ -86,18 +86,20 @@ div.choice_input{
 }
 
 div#sidebar{
+	position: absolute;
+	margin-top: 85px;
+	margin-left: 20px;
+}
+div#sidebar div.card{
 	padding: 10px 10px 10px 15px;
 	background: rgba(255,255,255,0.95);
-	/*border: 1px solid #a4a4a4;*/
 	box-shadow: 0px 3px 10px rgba(0,0,0,0.3);
-	position: absolute;
 	width: 275px;
-	margin-top: 100px;
-	margin-left: 20px;
-	overflow: hidden;
+	margin-bottom: 14px;
 }
+
 div#sidebar .title{
-	margin-top: 5px;
+	margin-top: 10px;
 }
 
 div#go_to_zip{
@@ -115,51 +117,6 @@ div#go_to_zip input{
 	width: 100%;
 }
 
-/*div.choice_box{
-	background: black;
-	height: 300px;
-	width: 300px;
-	border-radius: 150px;
-	box-shadow: 0px 5px 40px rgba(0,0,0,0.4);
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 100px;
-	text-align: center;
-	overflow: hidden;
-	color: white
-}
-
-div.choice_upper, div.choice_lower{
-	width: 200px;
-	height: 75px;
-	padding-left: 50px;
-	padding-right: 50px;
-}
-
-div.choice_upper{
-	background-color:white;
-	color: black;
-	padding-top: 60px;
-	padding-bottom: 15px;
-}
-div.choice_lower{
-	background-color:black;
-	color: white;
-	padding-bottom: 50px;
-	padding-top: 25px;
-}
-div.all_page_black{
-	padding-top: 90px;
-}
-
-.text_link{
-	cursor: hand;
-	cursor: pointer;
-}
-
-#step2{
-	display: none;
-}*/
 
 .form_input{
 	width: 194px;
@@ -168,9 +125,17 @@ div.all_page_black{
 	text-align: center;
 }
 
+div.pw_content{
+	text-align: center;
+}
 div#energy_comparison{
 	padding: 20px;
 	background: #ebebeb;
+	border-top: 1px solid #b6b6b6;
+}
+div#energy_results_container{
+	padding: 20px;
+	background: white; 
 	border-top: 1px solid #b6b6b6;
 }
 .pw_content{
@@ -178,9 +143,6 @@ div#energy_comparison{
 	margin-left: auto;
 	margin-right: auto;
 	min-width: 280px;
-}
-div#energy_comparison h2{
-	text-align: center;
 }
 div#energy_comparison form{
 	text-align: center;
@@ -231,40 +193,61 @@ div.switchers img{
 	cursor: hand;
 	cursor: pointer;
 }
-span.ranking, span.out_of{
+span.ranking, span.out_of, span.more, span.less{
 	font-weight: bolder;
 	font-size:x-large;
 }
+
+span.more{
+	color: red;
+}
+span.less{
+	color:green;
+}
+
+.ex {
+  width: 48%;
+  margin-right: 2%;
+  float: left;
+  overflow: hidden;
+  *zoom: 1;
+}
+ 
+.gradient{
+}
+
+#color-legend {
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iNTAlIiB4Mj0iMTAwJSIgeTI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzJhYzM2MyIvPjxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjY2Q4YzE0Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjOWM0Y2MyIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+  background-size: 100%;
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, hsl(0,80%, 50%)), color-stop(50%, hsl(80,80%, 50%)), color-stop(100%, hsl(255,40%, 50%)));
+  background-image: -webkit-linear-gradient(left, hsl(0,80%, 50%), hsl(80,80%, 50%), hsl(255,80%, 50%));
+  background-image: -moz-linear-gradient(left, hsl(0,80%, 50%), hsl(80,80%, 50%), hsl(255,80%, 50%));
+  background-image: -o-linear-gradient(left, hsl(0,80%, 50%), hsl(80,80%, 50%), hsl(255,80%, 50%));
+  background-image: linear-gradient(left, hsl(0,80%, 50%), hsl(80,80%, 50%), hsl(255,80%, 50%));
+  width: 178px;
+  height: 20px;
+  opacity: 0.7;
+  /*margin-left:auto;
+  margin-right:auto;*/
+  /*margin-bottom: 5px;*/
+  margin-left: 10px;
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.legend{
+	padding-top: 3px;
+	width: 95%;
+}
+.legend span{
+	margin-top: 2px;
+}
 </style>
 </head>
-<body onresize="resize()" onload="resize()">
+<body onresize="resize()" onload="resize();">
 
 <!--<div style="width: 100%; height:20px; text-align: right;"><span id="tag" style="margin-right:10px;">Test</span></div>-->
 <div class="mouseover"></div>
-
-
-
-<!--<div id="step1" class="choice_input">
-	<div class="choice_box">
-		<div class="choice_upper">
-			<h2 class="text_link" onclick="exploreCity()">Explore the city</h2>
-		</div>
-		<div class="choice_lower">
-			<h2 class="text_link" onclick="go_to_zip()">Go to your Zip Code</h2>
-		</div>
-	</div>
-</div>
- 
-<div id="step2" class="choice_input">
-	<div class="choice_box">
-		<div class="all_page_black">
-			<h2 id="zip_entry_string">Enter your Zip Code</h2>
-			<form onsubmit="zip_chosen(this); return false;">
-				<input name="zip_input" id="zip_input" class="form_input" type="number"/>
-			</form>
-		</div>
-	</div>
-</div>-->
 
 <div id="go_to_zip">
 	<form onsubmit="zip_chosen(this); return false;">
@@ -274,12 +257,18 @@ span.ranking, span.out_of{
 
 <div id="sidebar">
 	<!--<img src="static/imgs/cross.png" onclick="hideSidebar(); anticlick();" style="float:right; cursor: hand; cursor: pointer;"/>-->
+	<div class="card">
 	<h3 class="title">Welcome to Energy Zip</h3>
 	<div class="content">
 		<p>Click a zipcode to explore the energy use.</p>
 		<p>Click an icon at the bottom of the map to view energy use by household, population, or look at the median income per zipcode.</p> 
 		<p>Scroll down the page to see how your energy use compares to your neighborhood.</p>
-		<a href="#Comparison">How does my energy use compare?</a>
+		<p><a href="#energy_comparison">How does my energy use compare?</a></p>
+	</div>
+	</div>
+	<div class="card">
+
+		<div class="legend"><span style="float:left">High</span><div class='gradient' id="color-legend"></div><span style="float:right">Low</span></div>
 	</div>
 </div>
 
@@ -292,6 +281,13 @@ span.ranking, span.out_of{
 <script src="./static/data/ZipCodeElecPop.js"></script>
 <script src="./static/scripts/map.js"></script>
 <script src="./static/scripts/controls.js"></script>
+<!-- sets the easing -->
+<script>
+$('div.content a').click(function(){//$.scrollTo works EXACTLY the same way, but scrolls the whole screen
+		$.scrollTo( this.hash, 500);
+		return false;
+	});
+</script>
 
 
 <div class="switchers">
@@ -302,35 +298,36 @@ span.ranking, span.out_of{
 
 <div id="energy_comparison">
 <div class="pw_content">
-<a name = "Comparison"><h2>Compare your energy use</h2></a>
+<h2>Compare your energy use</h2>
 <p>How does your energy use stack up against others in your zipcode? Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your use compares.</p>
 <form onsubmit="analyse_usage(this); return false;">
 <h3>What's your zipcode?</h3><input name="zip_in" type="number" required="true" value=10023><br/>
 <h3>How many people live in your household?</h3><input name="num_in_house" type="number" required="true" value=2><br/>
 <h3>How much electricity did you use last year?</h3>
-<label class="date-label" for="Jan">Jan:</label><input class="date-input" name="Jan" placeholder="Jan">
-<label class="date-label" for="Feb">Feb:</label><input class="date-input" name="Feb"  placeholder="Feb" value=220>
-<label class="date-label" for="Mar">Mar:</label><input class="date-input" name="Mar"  placeholder="Mar" value=140>
-<label class="date-label" for="Apr">Apr:</label><input class="date-input" name="Apr"  placeholder="Apr"><br/>
-<label class="date-label" for="May">May:</label><input class="date-input" name="May"  placeholder="May">
-<label class="date-label" for="Jun">Jun:</label><input class="date-input" name="Jun"  placeholder="Jun">
-<label class="date-label" for="Jul">Jul:</label><input class="date-input" name="Jul"  placeholder="Jul" value=510>
-<label class="date-label" for="Aug">Aug:</label><input class="date-input" name="Aug"  placeholder="Aug"><br/>
-<label class="date-label" for="Sep">Sep:</label><input class="date-input" name="Sep"  placeholder="Sep">
-<label class="date-label" for="Oct">Oct:</label><input class="date-input" name="Oct"  placeholder="Oct">
-<label class="date-label" for="Nov">Nov:</label><input class="date-input" name="Nov"  placeholder="Nov">
-<label class="date-label" for="Dec">Dec:</label><input class="date-input" name="Dec"  placeholder="Dec"><br/><br/>
+<input class="date-input" name="Jan"  placeholder="Jan">
+<input class="date-input" name="Feb"  placeholder="Feb" value=220>
+<input class="date-input" name="Mar"  placeholder="Mar" value=140>
+<input class="date-input" name="Apr"  placeholder="Apr"><br/>
+<input class="date-input" name="May"  placeholder="May">
+<input class="date-input" name="Jun"  placeholder="Jun">
+<input class="date-input" name="Jul"  placeholder="Jul" value=510>
+<input class="date-input" name="Aug"  placeholder="Aug"><br/>
+<input class="date-input" name="Sep"  placeholder="Sep">
+<input class="date-input" name="Oct"  placeholder="Oct">
+<input class="date-input" name="Nov"  placeholder="Nov">
+<input class="date-input" name="Dec"  placeholder="Dec"><br/><br/>
 <button class="submit_button" type="submit">Run Comparison!</button>
 </form>
 <div id="energy_error" onclick="$('#energy_error').hide();" style="font-size:large; color:darkred; display:none;text-align:center;background:rgba(255,0,0,0.1);cursor:pointer;cursor:hand;padding:10px;margin:10px;border: 1px solid rgba(155,0,0,0.3);"><div id="energy_error_message">This is an error!</div></div>
 </div>
 </div>
-<div class="results" style="background: white; height: 500px; border-top: 1px solid #b6b6b6;">
-<div class="pw_content">
-<!--<h3>This section contains the results of the comparison as soon as the user enters them.</h3>-->
-<div id="energy_results"></div>
-<div id="energy_report_card" style="background: white; border-top: 1px solid #brbrbr;"></div>
-</div>
+<div id="energy_results_container" class="results">
+	<div class="pw_content">
+		<div id="energy_results">
+			<h2 class="title"></h2>
+			<div id="report_card"></div>
+		</div>
+	</div>
 </div>
 <div class="footer" style="background: grey; height: 250px; border-top: 1px solid black;">
 <div class="pw_content">

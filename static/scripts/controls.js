@@ -73,12 +73,8 @@ function analyse_usage(form){
 				//$('#loader_single').hide();
 			}
 			else{
-				text="";
-				for(var key in result){
-					//text+="<p>"+key+":\t"+JSON.stringify(result[key])+"</p>";
-				}
-				$("#energy_results").html(text);
 				fill_report_card(result);
+				$.scrollTo("#energy_results_container",500);
 			}
 		},
 		error:function(xhr, ajaxOptions, thrownError){
@@ -92,7 +88,6 @@ function analyse_usage(form){
 
 function fill_report_card(udata)
 {
-	var carddiv = document.getElementById('energy_report_card'); 
 	var zc = '#NY' + udata["zipcode"];
 	
 	var zipdata=d3.select(zc).datum();
@@ -130,20 +125,24 @@ function fill_report_card(udata)
 	{
 		frac = frac - 1.0;
 		fracsign = "more";
-		savingstext='could '
+		fracGrade= "Bad";
+		savingstext='could ';
 	}
 	else
 	{
 		frac = 1.0 - frac;
 		fracsign = "less";
+		fracGrade= "Good";
 		savings = savings * -1.0;
 	}
 
-	
-	carddiv.innerHTML = '<a name="report_card"><h3>Energy Report Card</h3></a><p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh (Neighborhood average: ' + Math.round(neighavg) + ' kWh)';
-	carddiv.innerHTML  += '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh (Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh)</p>';
-	carddiv.innerHTML += '<p>Your household uses ' + Math.round(frac*100.0) + '% ' + fracsign + ' electricity than the average in your neighborhood. You ' + savingstext + 'save $' + Math.round(savings) + ' per year!</p>'; 
-	carddiv.innerHTML += '<p>Seasonal modulation: ' + seasmodgrade + '. You use ' + Math.round(seasfrac*100) + '% ' + seasmodtext + ' electricity in the summer, relative to the winter,  compared to the U.S. average.</p>';
-	carddiv.innerHTML += '<p>Your seasonal modulation is computed by comparing your electricity usage in the summer to other seasons. If it is bad, then your home cooling is done inefficiently.</p>'
+	$("#energy_results > h2.title").text("Energy Report Card");
+	var text="<br/><h3>Total Energy Use: <span class='"+fracsign+"'>" + fracGrade + "</span></h3><p>Your household uses <span class='"+fracsign+"'>"+Math.round(frac*100.0)+"% "+fracsign+"</span> electricity that the neighborhood average.</p>";
+	text += '<p>You <span class="'+fracsign+'">' + savingstext + 'save $' + Math.round(savings) + '</span> per year!</p><br/>'; 
+	text += '<p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavg) + ' kWh';
+	text += '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh</p><br/>';
+	text += '<h3>Seasonal Modulation: <span class="'+seasmodtext+'">' + seasmodgrade + '</span></h3> <p>You use <span class="'+seasmodtext+'">' + Math.round(seasfrac*100) + '% ' + seasmodtext + '</span> electricity in the summer, relative to the winter,  compared to the U.S. average.</p><br/>';
+
+	$("#energy_results").append(text);
 }
 
