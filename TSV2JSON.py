@@ -26,7 +26,7 @@ def readZipCodeNeighbourhoodMap():
 #sys.exit()
 
 def convertEnergyTSV():
-	file=open("./data/ZipCodeData.tsv")
+	file=open("./data/ZipCodeData_3.0.tsv")
 	data={}
 	kwh_by_pop=[]
 	kwh_by_house=[]
@@ -44,6 +44,13 @@ def convertEnergyTSV():
 		entry["pop"]=float(vals[3])
 		entry["num_house"]=float(vals[4])
 		entry["median_income"]=float(vals[5])
+		entry["area"]=float(vals[6])
+		entry["tax_credit"]=float(vals[7])
+		entry["avg_home_value"]=float(vals[8])
+		entry["E_comm_kwh"]=float(vals[9])
+		entry["E_comm_GJ"]=float(vals[10])
+		entry["E_inst_kwh"]=float(vals[11])
+		entry["E_inst_kwh"]=float(vals[12])
 		if float(vals[1])>0:
 
 			if float(vals[3])==0:
