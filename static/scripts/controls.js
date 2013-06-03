@@ -34,8 +34,17 @@ function zoom_to_zip(zip_in){
 	click(data);
 }
 
+function goto_map(){
+	$.scrollTo( '.map', 500);
+	$('#go_to_energy_comparison').show();
+	$('#go_to_map').hide();
+}
 
-
+function goto_energy_comp(){
+	$.scrollTo( '#energy_comparison', 500);
+	$('#go_to_energy_comparison').hide();
+	$('#go_to_map').show();
+}
 
 
 function switchMeasure(button,key){

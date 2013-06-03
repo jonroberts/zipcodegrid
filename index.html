@@ -4,7 +4,7 @@
 <head>
 <title>NYC Zipcodes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,200,700' rel='stylesheet' type='text/css'>
 <style>
 html, body, div, span, applet, object, iframe,
 blockquote, pre,
@@ -25,7 +25,8 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
-	font-family: 'PT Sans', helvetica, sans-serif;
+	font-family: 'Roboto', helvetica, sans-serif;
+	font-weight: 100;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
@@ -174,7 +175,7 @@ button.submit_button{
 
 div.switchers{
 	margin-left: 15px;
-	margin-top: -47px;
+	margin-top: -43px;
 }
 div.switchers div{
 	/*width: 30px;
@@ -242,6 +243,13 @@ span.less{
 .legend span{
 	margin-top: 2px;
 }
+
+div#go_to_energy_comparison, div#go_to_map{
+	text-align:right;
+	margin-top: -18px;
+	cursor: hand;
+	cursor: pointer;
+}
 </style>
 </head>
 <body onresize="resize()" onload="resize();">
@@ -297,6 +305,8 @@ $('div.content a').click(function(){//$.scrollTo works EXACTLY the same way, but
 </div>
 
 <div id="energy_comparison">
+<div id="go_to_energy_comparison" onclick="goto_energy_comp();">How does your usage compare? &or;</div>
+<div id="go_to_map" onclick="goto_map();" style="display:none;">Check out the map &and;</div>
 <div class="pw_content">
 <h2>Compare your energy use</h2>
 <p>How does your energy use stack up against others in your zipcode? Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your use compares.</p>
