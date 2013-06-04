@@ -26,11 +26,18 @@ def readZipCodeNeighbourhoodMap():
 #sys.exit()
 
 def convertEnergyTSV():
-	file=open("./data/ZipCodeData_3.0.tsv")
+	file=open("./data/ZipCodeData_3.2.tsv")
+	kwh_price = 0.27 # dollars/kWh
 	data={}
 	kwh_by_pop=[]
 	kwh_by_house=[]
 	kwh_by_household_income=[]
+	E_density=[]
+	E_comm_density=[]
+	E_inst_density=[]
+	E_tot_density=[]
+	taxcredit_per_house=[]
+	E_pct_income=[]
 	counter=0
 	for line in file:
 		if '#' in line:
@@ -50,7 +57,7 @@ def convertEnergyTSV():
 		entry["E_comm_kwh"]=float(vals[9])
 		entry["E_comm_GJ"]=float(vals[10])
 		entry["E_inst_kwh"]=float(vals[11])
-		entry["E_inst_kwh"]=float(vals[12])
+		entry["E_inst_GJ"]=float(vals[12])
 		if float(vals[1])>0:
 
 			if float(vals[3])==0:
@@ -71,13 +78,45 @@ def convertEnergyTSV():
 			entry["kwh_by_house"]=0
 			entry["kwh_by_household_income"]=0
 				
-		
+		if float(vals[6])>0: # add energy densities
+			entry["E_density"]      = float(vals[1])/float(vals[6])
+			entry["E_comm_density"] = float(vals[9])/float(vals[6])
+			entry["E_inst_density"] = float(vals[11])/float(vals[6])
+			entry["E_tot_density"]  = (float(vals[1])+float(vals[9])+float(vals[11]))/float(vals[6])
+		else:
+			entry["E_density"]      = 0
+			entry["E_comm_density"] = 0
+			entry["E_inst_density"] = 0
+			entry["E_tot_density"]  = 0
+
+		try:
+			entry["taxcredit_per_house"]  = float(vals[7])/float(vals[4])
+		except ZeroDivisionError:
+			entry["taxcredit_per_house"]  = 0
+
+		try:
+			entry["E_pct_income"]  = 100.*kwh_price*float(vals[1])/(float(vals[4])*float(vals[5]))
+		except ZeroDivisionError:
+			entry["E_pct_income"]  = 0
+
+
+
 		data[key]=entry
 	print counter
 	kwh_by_pop=sort(array(kwh_by_pop))[::-1]
 	kwh_by_house=sort(array(kwh_by_house))[::-1]
 	kwh_by_household_income=sort(array(kwh_by_household_income))[::-1]
 	
+	E_density           = sort([data[zipcode]['E_density']           for zipcode in data if data[zipcode]['E_density']>0])[::-1]
+	E_comm_density      = sort([data[zipcode]['E_comm_density']      for zipcode in data if data[zipcode]['E_comm_density']>0])[::-1]
+	E_inst_density      = sort([data[zipcode]['E_inst_density']      for zipcode in data if data[zipcode]['E_inst_density']>0])[::-1]
+	E_tot_density       = sort([data[zipcode]['E_tot_density']       for zipcode in data if data[zipcode]['E_tot_density']>0])[::-1]
+	E_pct_income        = sort([data[zipcode]['E_pct_income']        for zipcode in data if data[zipcode]['E_pct_income']>0])[::-1]
+	taxcredit_per_house = sort([data[zipcode]['taxcredit_per_house'] for zipcode in data if data[zipcode]['taxcredit_per_house']>0])[::-1]
+
+	# add averages (ignore zeros)
+	#data.update({ 'avg_E_kwh' : mean([data[z]['E_kwh'] for z in data if data[z]['E_kwh']>0]) })
+
 	for key in data.keys():
 		if data[key]["kwh_by_pop"]==0:
 			data[key]["rank_kwh_pop"]=0
@@ -87,7 +126,28 @@ def convertEnergyTSV():
 			data[key]["rank_kwh_pop"]=int(where(kwh_by_pop==data[key]["kwh_by_pop"])[0][0]+1)
 			data[key]["rank_kwh_house"]=int(where(kwh_by_house==data[key]["kwh_by_house"])[0][0]+1)
 			data[key]["rank_kwh_household_income"]=int(where(kwh_by_household_income==data[key]["kwh_by_household_income"])[0][0]+1)
-	
+
+		try:               data[key]["rank_E_density"]=int(where(E_density==data[key]["E_density"])[0][0]+1)
+		except IndexError: data[key]["rank_E_density"]=0
+
+		try:               data[key]["rank_E_comm_density"]=int(where(E_comm_density==data[key]["E_comm_density"])[0][0]+1)
+		except IndexError: data[key]["rank_E_comm_density"]=0
+
+		try:	           data[key]["rank_E_inst_density"]=int(where(E_inst_density==data[key]["E_inst_density"])[0][0]+1)
+		except IndexError: data[key]["rank_E_inst_density"]=0
+
+		try:	           data[key]["rank_E_tot_density"]=int(where(E_tot_density==data[key]["E_tot_density"])[0][0]+1)
+		except IndexError: data[key]["rank_E_tot_density"]=0
+
+		try:	           data[key]["rank_E_pct_income"]=int(where(E_pct_income==data[key]["E_pct_income"])[0][0]+1)
+		except IndexError: data[key]["rank_E_pct_income"]=0
+
+		try:	           data[key]["rank_taxcredit_per_house"]=int(where(taxcredit_per_house==data[key]["taxcredit_per_house"])[0][0]+1)
+		except IndexError: data[key]["rank_taxcredit_per_house"]=0
+
+		try:               data[key]["rank_E_density"] = int(where(E_density==data[key]["E_density"])[0][0]+1)
+		except IndexError: data[key]["rank_E_density"] = 0
+
 	return data
 
 data=convertEnergyTSV()
