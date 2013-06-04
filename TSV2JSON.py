@@ -115,8 +115,32 @@ def convertEnergyTSV():
 	taxcredit_per_house = sort([data[zipcode]['taxcredit_per_house'] for zipcode in data if data[zipcode]['taxcredit_per_house']>0])[::-1]
 
 	# add averages (ignore zeros)
-	#data.update({ 'avg_E_kwh' : mean([data[z]['E_kwh'] for z in data if data[z]['E_kwh']>0]) })
-
+	#averages = {}
+	#averages.update({ 'E_density'      : mean([data[z]['E_density']      for z in data if data[z]['E_density']>0]) })
+	#averages.update({ 'E_comm_density' : mean([data[z]['E_comm_density'] for z in data if data[z]['E_comm_density']>0]) })
+	#averages.update({ 'E_inst_density' : mean([data[z]['E_inst_density'] for z in data if data[z]['E_inst_density']>0]) })
+	#averages.update({ 'kwh_by_pop'     : mean([data[z]['kwh_by_pop']  for z in data if data[z]['kwh_by_pop']>0]) })
+	#averages.update({ 'kwh_by_house'   : mean([data[z]['kwh_by_house']  for z in data if data[z]['kwh_by_house']>0]) })
+	#averages.update({ 'kwh_by_household_income' : mean([data[z]['kwh_by_household_income']  for z in data if data[z]['kwh_by_household_income']>0]) })
+	#averages.update({ 'E_pct_income'     : mean([data[z]['E_pct_income']  for z in data if data[z]['E_pct_income']>0]) })
+	file_avgs=open("./data/ZipCodeAverages_3.3.tsv")
+	for line in file_avgs:
+		if '#' in line:
+			continue
+		averages={}
+		averages["E_kwh"]=float(vals[1])
+		averages["E_GJ"]=float(vals[2])
+		averages["pop"]=float(vals[3])
+		averages["num_house"]=float(vals[4])
+		averages["median_income"]=float(vals[5])
+		averages["area"]=float(vals[6])
+		averages["tax_credit"]=float(vals[7])
+		averages["avg_home_value"]=float(vals[8])
+		averages["E_comm_kwh"]=float(vals[9])
+		averages["E_comm_GJ"]=float(vals[10])
+		averages["E_inst_kwh"]=float(vals[11])
+		averages["E_inst_GJ"]=float(vals[12])
+		
 	for key in data.keys():
 		if data[key]["kwh_by_pop"]==0:
 			data[key]["rank_kwh_pop"]=0
@@ -148,7 +172,8 @@ def convertEnergyTSV():
 		try:               data[key]["rank_E_density"] = int(where(E_density==data[key]["E_density"])[0][0]+1)
 		except IndexError: data[key]["rank_E_density"] = 0
 
-	return data
+	return data, averages
 
-data=convertEnergyTSV()
+data, averages = convertEnergyTSV()
 print json.dumps(data)
+print json.dumps(averages)
