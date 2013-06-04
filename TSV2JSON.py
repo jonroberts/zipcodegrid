@@ -26,7 +26,7 @@ def readZipCodeNeighbourhoodMap():
 #sys.exit()
 
 def convertEnergyTSV():
-	file=open("./data/ZipCodeData_3.2.tsv")
+	file=open("./data/ZipCodeData_3.3.tsv")
 	kwh_price = 0.27 # dollars/kWh
 	data={}
 	kwh_by_pop=[]
@@ -127,6 +127,7 @@ def convertEnergyTSV():
 	for line in file_avgs:
 		if '#' in line:
 			continue
+		vals=line.split()
 		averages={}
 		averages["E_kwh"]=float(vals[1])
 		averages["E_GJ"]=float(vals[2])
