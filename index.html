@@ -252,7 +252,7 @@ div#go_to_energy_comparison, div#go_to_map{
 }
 </style>
 </head>
-<body onresize="resize()" onload="resize();">
+<body onresize="resize()" onload="init();">
 
 <!--<div style="width: 100%; height:20px; text-align: right;"><span id="tag" style="margin-right:10px;">Test</span></div>-->
 <div class="mouseover"></div>
@@ -275,7 +275,7 @@ div#go_to_energy_comparison, div#go_to_map{
 	</div>
 	</div>
 	<div class="card">
-
+		<form id="map_picker" style="display:none"><select id="map_selector" onchange="switch_map(this.value);"></select></form>
 		<div class="legend"><span style="float:left">High</span><div class='gradient' id="color-legend"></div><span style="float:right">Low</span></div>
 	</div>
 </div>
@@ -299,8 +299,8 @@ $('div.content a').click(function(){//$.scrollTo works EXACTLY the same way, but
 
 
 <div class="switchers">
-	<div onclick="switchMeasure(this,'kwh_by_pop');" class="switcher_button"><img src="./static/imgs/kwh_by_pop.png" title="Electricity use per person"/></div>
-	<div onclick="switchMeasure(this,'kwh_by_house');" class="switcher_button"><img src="./static/imgs/kwh_by_house.png" title="Electricity use per household"/></div>
+	<div onclick="switchMeasure(this,'kwh_pop');" class="switcher_button"><img src="./static/imgs/kwh_by_pop.png" title="Electricity use per person"/></div>
+	<div onclick="switchMeasure(this,'kwh_house');" class="switcher_button"><img src="./static/imgs/kwh_by_house.png" title="Electricity use per household"/></div>
 	<div onclick="switchMeasure(this,'median_income');" class="switcher_button"><img src="./static/imgs/glyphicons_227_usd.png" title="Median income"/></div>
 </div>
 

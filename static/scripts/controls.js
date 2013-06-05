@@ -17,6 +17,13 @@ function reset_choice_boxes(){
 	
 }*/
 
+function switch_map(arg){
+	map.current=arg;
+	g.selectAll("path").transition().duration(1000)
+	  .style("fill",function(d){return getColor(d);})	
+
+}
+
 function zip_chosen(input){
 	var zip_in="NY"+$("#zip_input").val();
 	if(zip_in in elec_pop){
@@ -100,8 +107,8 @@ function fill_report_card(udata)
 	var zc = '#NY' + udata["zipcode"];
 	
 	var zipdata=d3.select(zc).datum();
-	var neighavg=zipdata["kwh_by_house"];
-	var neighavgcapita = zipdata["kwh_by_pop"];
+	var neighavg=zipdata["kwh_house"];
+	var neighavgcapita = zipdata["kwh_pop"];
 	var seasmod= udata["metric"];
 	var seasmodgrade = "Average";
 	var seasmodtext = "";

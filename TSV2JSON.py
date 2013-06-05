@@ -3,6 +3,9 @@
 import sys
 import os
 import json
+from json import encoder
+encoder.FLOAT_REPR = lambda o: format(o, '.2f')
+
 from numpy import *
 
 # turns the zipcode data into a JSON dictionary
@@ -62,21 +65,21 @@ def convertEnergyTSV():
 
 			if float(vals[3])==0:
 				print vals
-				entry["kwh_by_pop"]=0
-				entry["kwh_by_house"]=0
-				entry["kwh_by_household_income"]=0
+				entry["kwh_pop"]=0
+				entry["kwh_house"]=0
+				entry["kwh_household_income"]=0
 			else:
-				entry["kwh_by_pop"]=float(vals[1])/(1.*float(vals[3]))
-				entry["kwh_by_house"]=float(vals[1])/(1.*float(vals[4]))
-				entry["kwh_by_household_income"]=float(vals[1])/(1.*float(vals[4])*float(vals[5]))
-				kwh_by_pop.append(entry["kwh_by_pop"])
-				kwh_by_house.append(entry["kwh_by_house"])
-				kwh_by_household_income.append(entry["kwh_by_household_income"])
+				entry["kwh_pop"]=float(vals[1])/(1.*float(vals[3]))
+				entry["kwh_house"]=float(vals[1])/(1.*float(vals[4]))
+				entry["kwh_household_income"]=float(vals[1])/(1.*float(vals[4])*float(vals[5]))
+				kwh_by_pop.append(entry["kwh_pop"])
+				kwh_by_house.append(entry["kwh_house"])
+				kwh_by_household_income.append(entry["kwh_household_income"])
 				counter+=1
 		else:
-			entry["kwh_by_pop"]=0
-			entry["kwh_by_house"]=0
-			entry["kwh_by_household_income"]=0
+			entry["kwh_pop"]=0
+			entry["kwh_house"]=0
+			entry["kwh_household_income"]=0
 				
 		if float(vals[6])>0: # add energy densities
 			entry["E_density"]      = float(vals[1])/float(vals[6])
@@ -143,14 +146,14 @@ def convertEnergyTSV():
 		averages["E_inst_GJ"]=float(vals[12])
 		
 	for key in data.keys():
-		if data[key]["kwh_by_pop"]==0:
+		if data[key]["kwh_pop"]==0:
 			data[key]["rank_kwh_pop"]=0
 			data[key]["rank_kwh_house"]=0
 			data[key]["rank_kwh_household_income"]=0
 		else:
-			data[key]["rank_kwh_pop"]=int(where(kwh_by_pop==data[key]["kwh_by_pop"])[0][0]+1)
-			data[key]["rank_kwh_house"]=int(where(kwh_by_house==data[key]["kwh_by_house"])[0][0]+1)
-			data[key]["rank_kwh_household_income"]=int(where(kwh_by_household_income==data[key]["kwh_by_household_income"])[0][0]+1)
+			data[key]["rank_kwh_pop"]=int(where(kwh_by_pop==data[key]["kwh_pop"])[0][0]+1)
+			data[key]["rank_kwh_house"]=int(where(kwh_by_house==data[key]["kwh_house"])[0][0]+1)
+			data[key]["rank_kwh_household_income"]=int(where(kwh_by_household_income==data[key]["kwh_household_income"])[0][0]+1)
 
 		try:               data[key]["rank_E_density"]=int(where(E_density==data[key]["E_density"])[0][0]+1)
 		except IndexError: data[key]["rank_E_density"]=0

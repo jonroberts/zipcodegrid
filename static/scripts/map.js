@@ -1,27 +1,70 @@
 
-var norms={"kwh_by_pop":0,"kwh_by_house":0,"kwh_by_household_income":0,"median_income":0,"pop":0};
+var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1},
+					"kwh_house":{"name":"Electricity use per household","max":0,"min":-1},
+					"E_pct_income":{"name":"Percentage of income spent on electricity","max":0,"min":-1},
+					"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1},
+					"E_tot_density":{"name":"Electricity density - total","max":0,"min":-1},
+					"E_density":{"name":"Residential energy density","max":0,"min":-1},
+					"E_comm_density":{"name":"Commercial electricity density","max":0,"min":-1},
+					"E_inst_density":{"name":"Institutional electricity density","max":0,"min":-1}
+				}
+
+var mapKeys=[];
+for(var key in map_details){
+	mapKeys.push(key);
+}
+
+// example dict of data for a zipcode:
+/*
+"NY11435": {
+			"kwh_pop": 1445.3028852422374,
+			"rank_kwh_pop": 150,
+			"kwh_house": 4377.904310539381,
+			"rank_kwh_house": 134,
+			"taxcredit_per_house": 0.33338975400586773,
+			"rank_taxcredit_per_house": 34,
+			"E_pct_income": 2.1854715894050827,
+			"rank_E_pct_income": 120,
+
+			"E_tot_density": 120649205.94059406,
+			"rank_E_tot_density": 106,
+			"E_density": 51217145.87458746,
+			"rank_E_density": 104,
+			"E_comm_density": 45887733.993399344,
+			"rank_E_comm_density": 103,
+			"E_inst_density": 23544326.072607264,
+			"rank_E_inst_density": 63,
+
+			"kwh_household_income": 0.08094339220018824,
+			"rank_kwh_household_income": 120,
+			"pop": 53687.0,
+			"area": 1.515,
+			"num_house": 17724.0,
+			"E_GJ": 279339.0,
+			"tax_credit": 5909.0,
+			"E_inst_kwh": 35669654.0,
+			"avg_home_value": 380400.0,
+			"median_income": 54086.0,
+			"E_comm_GJ": 250272.0,
+			"E_kwh": 77593976.0,
+			"E_inst_GJ": 128411.0,
+			"E_comm_kwh": 69519917.0,
+			}
+*/
+
+//var norms={"kwh_pop":0,"kwh_house":0,"kwh_household_income":0,"median_income":0,"pop":0};
 function initData(){
 	for(var i in zipcodes.features){
 		var zip=zipcodes.features[i];
 		var id="NY"+zip.id;
 		if(id in elec_pop){
-			for(var key in elec_pop[id]){zip[key]=elec_pop[id][key];
+			for(var key in elec_pop[id]){zip[key]=elec_pop[id][key];}
+			for(var key in map_details){
+				map_details[key]["min"]=(map_details[key]["min"]==-1 || map_details[key]["min"]>zip[key])?zip[key]:map_details[key]["min"];
+				map_details[key]["max"]=(map_details[key]["max"]==0 || map_details[key]["max"]<zip[key])?zip[key]:map_details[key]["max"];
 			}
-			for(var key in norms){norms[key]=(norms[key]<zip[key])?zip[key]:norms[key];}
 		}
-		else{
-			zip["pop"]=0;
-			zip["num_house"]=0;
-			zip["E_kwh"]=0;
-			zip["E_GJ"]=0;
-			zip["median_income"]=0;
-			zip["kwh_by_pop"]=0;
-			zip["kwh_by_house"]=0;
-			zip["kwh_by_household_income"]=0;
-			zip["rank_kwh_pop"]=0;
-			zip["rank_kwh_house"]=0;
-			zip["rank_kwh_household_income"]=0;
-		}
+		else{for(var key in elec_pop["NY10012"]){zip[key]=0;}}
 	}
 }
 
@@ -46,22 +89,25 @@ var path = d3.geo.path().projection(projection);
 var drag = d3.behavior.drag()
         .on("drag",function(d){dragging(d);});
 
-var svg = d3.select("body").append("svg")
+var map = d3.select("body").append("svg")
 	.classed("map",true)
     .attr("width", width)
     .attr("height", height)
 	.call(drag);
+map.current="kwh_pop";
 
-var g = svg.append("g")
+var g = map.append("g")
     .attr("id", "states")
 	.call(drag);
 
-function getColor(d,key){
-	var ratio=d[key]*(255/norms[key]);
+function getColor(d){
+	key=map.current;
+	var ratio=(d[key]-map_details[key]["min"])*(255/(1.*map_details[key]["max"]-map_details[key]["min"]));
+	console.log(ratio);
 	if(ratio>0){
 		return d3.hsl(255-ratio,0.4,0.5);
 	}else{
-		return "black";
+		return "lightgrey";
 	}
 }
 
@@ -70,7 +116,7 @@ g.selectAll("path")
 	.enter().append("path")
 	  .attr("d", path)
 	  .attr("id", function(d){return "NY"+d.id;})
-	  .style("fill",function(d){return getColor(d,"kwh_by_pop")})
+	  .style("fill",function(d){return getColor(d,"kwh_pop")})
 	  .style("opacity",0.7)
 	  .on("click", click)
 	  .on("mouseover",mouseover)
@@ -211,18 +257,18 @@ function setSidebarContent(d){
 	var content="";
 	if(d.pop>0){
 		
-		content+="<h4>Energy per person: "+(d.kwh_by_pop).toFixed(0)+"kwh</h4>";
+		content+="<h4>Energy per person: "+(d.kwh_pop).toFixed(0)+"kwh</h4>";
 		var color="green";
 		if (d.rank_kwh_pop < 175/2.){color="red"}
 		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_pop).toFixed(0)+suffix(d.rank_kwh_pop)+"</span> of <span class='out_of'>175</span>  </p>";
 
-		content+="<h4>Energy per household: "+(d.kwh_by_house).toFixed(0)+"kwh</h4>";
+		content+="<h4>Energy per household: "+(d.kwh_house).toFixed(0)+"kwh</h4>";
 		color="green";
 		if (d.rank_kwh_house < 175/2.){color="red"}
 		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+"</span> of <span class='out_of'>175</span> </p>";
 
-		var total_kwh=d.pop*d.kwh_by_pop;
-		var energies=energy_conversion(d.kwh_by_house);
+		var total_kwh=d.pop*d.kwh_pop;
+		var energies=energy_conversion(d.kwh_house);
 		content+="<h3>C02 per household:</h3><h3 style='text-align:center; color:"+color+"'>"+energies.CO2.toFixed(0)+" pounds/year</h3>";
 
 	}  
@@ -238,3 +284,9 @@ function resize(){
 	$(".map").height(height);
 }
 
+function init(){
+	// sets up the dropdown that lets us choose between the maps
+	var sel = $('#map_selector');
+	for(var key in map_details){sel.append($("<option>").attr('value',key).attr('name',key).text(map_details[key]["name"]));}
+	$('#map_picker').show();
+}
