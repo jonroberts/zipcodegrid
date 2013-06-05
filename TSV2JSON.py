@@ -26,7 +26,7 @@ def readZipCodeNeighbourhoodMap():
 #sys.exit()
 
 def convertEnergyTSV():
-	file=open("./data/ZipCodeData_3.3.tsv")
+	file=open("./data/ZipCodeData_3.2.tsv")
 	kwh_price = 0.27 # dollars/kWh
 	data={}
 	kwh_by_pop=[]
