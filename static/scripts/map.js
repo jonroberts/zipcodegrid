@@ -1,12 +1,12 @@
 
-var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1},
-					"kwh_house":{"name":"Electricity use per household","max":0,"min":-1},
-					"E_pct_income":{"name":"Percentage of income spent on electricity","max":0,"min":-1},
-					"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1},
-					"E_tot_density":{"name":"Electricity density - total","max":0,"min":-1},
-					"E_density":{"name":"Residential energy density","max":0,"min":-1},
-					"E_comm_density":{"name":"Commercial electricity density","max":0,"min":-1},
-					"E_inst_density":{"name":"Institutional electricity density","max":0,"min":-1}
+var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1,"units":"kwh/person","num_decimal":0},
+				"kwh_house":{"name":"Electricity use per household","max":0,"min":-1,"units":"kwh/house","num_decimal":0},
+				"E_pct_income":{"name":"Percentage of income spent on electricity","max":0,"min":-1,"units":"percent of income","num_decimal":1},
+				"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1,"units":"tax credits per household","num_decimal":2},
+				"E_tot_density":{"name":"Electricity density - total","max":0,"min":-1,"units":"kwh/m^2","num_decimal":0},
+				"E_density":{"name":"Residential energy density","max":0,"min":-1,"units":" residential kwh/m^2","num_decimal":0},
+				"E_comm_density":{"name":"Commercial electricity density","max":0,"min":-1,"units":"commercial kwh/m^2","num_decimal":0},
+				"E_inst_density":{"name":"Institutional electricity density","max":0,"min":-1,"units":"institutional kwh/m^2","num_decimal":0}
 				}
 
 var mapKeys=[];
@@ -103,7 +103,6 @@ var g = map.append("g")
 function getColor(d){
 	key=map.current;
 	var ratio=(d[key]-map_details[key]["min"])*(255/(1.*map_details[key]["max"]-map_details[key]["min"]));
-	console.log(ratio);
 	if(ratio>0){
 		return d3.hsl(255-ratio,0.4,0.5);
 	}else{
@@ -141,7 +140,12 @@ function mouseover(d){
 
 	var text="NY"+d.id;
 	if(d.id in neighborhoods){text+="<br/>"+neighborhoods[d.id]["neighborhood"];}
-	if(d.pop>0){text+="<br/>"+(d.E_kwh/(d.pop)).toFixed(0)+" kwh/person";}  
+	if(d.pop>0){
+		if(d[map.current]>0){
+			text+="<br/>"+d[map.current].toFixed(map_details[map.current]["num_decimal"])+" "+map_details[map.current]["units"];} 
+		else{
+			text+="<br/>0 "+map_details[map.current]["units"];}
+	}
 
 	$(".mouseover").html(text);
 	$(".mouseover").css("display","inline");
