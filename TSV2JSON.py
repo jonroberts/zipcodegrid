@@ -24,9 +24,6 @@ def readZipCodeNeighbourhoodMap():
 			for i in range(1,len(vals)):
 				data[vals[i].strip()]={"borough":currentBorough,"neighborhood":neighbourhood}
 	return data
-#data=readZipCodeNeighbourhoodMap()
-#print json.dumps(data)
-#sys.exit()
 
 def convertEnergyTSV():
 	file=open("./data/ZipCodeData_3.2.tsv")
@@ -56,7 +53,7 @@ def convertEnergyTSV():
 		entry["pop"]=float(vals[3])
 		entry["num_house"]=float(vals[4])
 		entry["median_income"]=float(vals[5])
-		entry["area"]=float(vals[6])
+		entry["area"]=float(vals[6])*27878400
 		entry["tax_credit"]=float(vals[7])
 		entry["avg_home_value"]=float(vals[8])
 		entry["E_comm_kwh"]=float(vals[9])

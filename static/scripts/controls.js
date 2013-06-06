@@ -118,13 +118,13 @@ function fill_report_card(udata)
 	var seasfrac;	
 	if (seasmod < 1.0)
 	{
-		seasmodgrade = "Good";
+		seasmodgrade = "Better Than Average";
 		seasfrac = 1.0-seasmod;
 		seasmodtext = "less";
 	}
 	else if (seasmod > 1.0)
 	{
-		seasmodgrade = "Bad";
+		seasmodgrade = "Worse Than Average";
 		seasfrac = seasmod - 1.0;
 		seasmodtext = "more";
 	}
@@ -144,14 +144,14 @@ function fill_report_card(udata)
 	{
 		frac = frac - 1.0;
 		fracsign = "more";
-		fracGrade= "Bad";
+		fracGrade= "Worse Than Average";
 		savingstext='could ';
 	}
 	else
 	{
 		frac = 1.0 - frac;
 		fracsign = "less";
-		fracGrade= "Good";
+		fracGrade= "Better Than Average";
 		savings = savings * -1.0;
 	}
 
@@ -165,3 +165,16 @@ function fill_report_card(udata)
 	$("#energy_results").append(text);
 }
 
+var _dateKeys=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function buildDateOrderedMonthKey(){
+	var d = new Date();
+	var n = d.getMonth(); // current month, 0 is January
+	var loc_keys=[];
+	for(var i=0; i<12; i++){
+		var id=(n+i<=11)?n+i:n-12+i;
+		var key=_dateKeys[id];
+		loc_keys.push(key);
+	}
+	return loc_keys;
+}

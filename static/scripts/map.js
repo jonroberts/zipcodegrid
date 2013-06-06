@@ -203,7 +203,6 @@ function zoom_in(){
 	}
 }
 function zoom_out(){
-	console.log("zooming out!")
 	k*=0.5;
 	if(k<1){
 		k=1;
