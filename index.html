@@ -284,6 +284,24 @@ div#go_to_map{
 	border: 1px solid grey;
 	margin-top: 5px;
 }
+
+line.monthlyPlotAxis {
+    stroke: black;
+    stroke-width: 1.5;
+}
+line.monthlyPlotTicks {
+    stroke: black;
+    stroke-width: 1.5;
+}
+line.monthlyPlotGrid {
+   stroke: black;
+   stroke-width: 1.0;
+   opacity: 0.7;
+}
+text.monthlyPlot {
+    font-family: arial;
+    font-size: 12pt;
+}
 </style>
 </head>
 <body onresize="resize()" onload="init();">
@@ -396,6 +414,7 @@ $("#goto_least").click(function(){goto_least();return false;})
 		<div id="energy_results">
 			<h2 class="title"></h2>
 			<div id="report_card"></div>
+			<div id="monthlyPlot"></div>
 		</div>
 	</div>
 </div>

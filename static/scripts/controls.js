@@ -163,6 +163,28 @@ function fill_report_card(udata)
 	text += '<h3>Seasonal Modulation: <span class="'+seasmodtext+'">' + seasmodgrade + '</span></h3> <p>You use <span class="'+seasmodtext+'">' + Math.round(seasfrac*100) + '% ' + seasmodtext + '</span> electricity in the summer, relative to the winter,  compared to the U.S. average.</p><br/>';
 
 	$("#energy_results").append(text);
+
+
+
+	//Setup arrays for plotting the line chart...
+	var elecUser = new Array();
+	var elecUS = new Array();
+	
+
+
+
+	for (key in udata["us_monthly"])
+	{
+		elecUS[key] = udata["us_monthly"][key]*udata["annual_usage"]/12.0;
+	}
+
+	for (key in udata["ratio"])
+	{
+		elecUser[key] = udata["ratio"][key]*udata["us_monthly"][key]*udata["annual_usage"]/12.0;
+	}
+
+
+	DrawLineChart(elecUser,elecUS,udata["average_ratio"]);
 }
 
 var _dateKeys=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -178,3 +200,270 @@ function buildDateOrderedMonthKey(){
 	}
 	return loc_keys;
 }
+
+
+
+
+function monthlyUseLine()
+{
+	this.month="";
+	this.use=0.0;
+}
+
+function DrawLineChart(elecUser, elecUS, average_ratio)
+{
+  var w = 800;
+  var h = 400;
+  var margin = 80;
+
+
+  var mydiv = document.getElementById("monthlyPlot");
+  mydiv.innerHTML="";
+
+
+
+//Setup data arrays
+//elecUser: Monthly usage for the user : MUST BE PASSED TO THIS FUNCTION
+//elecUS: Monthly average use for USA : MUST BE PASSED TO THIN FUNCTION
+//elecNorm: Monthly average use for USA normalized to yearly usage of user : CALCULATED WITHIN THE FUNCTION
+
+
+  //var elecUser = [100,200,100,200,100,200,100,200,100,200,100,200];
+  //var elecUS = [200,400,300,400,540,680,760,800,700,600,400,300];
+  var elecUSNorm = new Array;
+  //var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var months = buildDateOrderedMonthKey();
+
+  var monthsIndex={};
+
+  for (var i=0; i<months.length; i++)
+  {
+    monthsIndex[months[i]]=i;
+  }
+
+  
+
+  var elecUserOrdered = new Array();
+  var ind=0;
+  for (key in monthsIndex)
+  {
+    if (elecUser[key])
+    {
+      elecUserOrdered[ind] = new monthlyUseLine();
+      elecUserOrdered[ind].month = key;
+      elecUserOrdered[ind].use = elecUser[key];
+      ind++;
+    }
+  }
+
+  var elecUSOrdered = new Array();
+  for (key in monthsIndex)
+  {
+    elecUSOrdered[monthsIndex[key]] = new monthlyUseLine();
+    elecUSOrdered[monthsIndex[key]].month = key;
+    elecUSOrdered[monthsIndex[key]].use = elecUS[key];
+  }
+
+
+  for (i=0; i<12; i++)
+  {
+    elecUSNorm[i] = new monthlyUseLine();
+    elecUSNorm[i].month = elecUSOrdered[i].month;
+    elecUSNorm[i].use = elecUSOrdered[i].use*average_ratio;
+  }
+  
+
+//Done calculating the data for lines...
+
+
+  
+
+
+
+
+//Setup scales
+//Calculate max Y value
+
+  var maxY = -1000.0;
+  for (var i = 0; i<elecUserOrdered.length; i++)
+  {
+    if (elecUserOrdered[i].use > maxY)
+    {
+      maxY = elecUserOrdered[i].use;
+    }
+  }
+
+  for (var i = 0; i<elecUSOrdered.length; i++)
+  {
+    if (elecUSOrdered[i].use > maxY)
+    {
+      maxY = elecUSOrdered[i].use;
+    }
+  }
+
+  for (var i = 0; i<elecUSNorm.length; i++)
+  {
+    if (elecUSNorm[i].use > maxY)
+    {
+      maxY = elecUSNorm[i].use;
+    }
+  }
+
+
+  //var maxY = d3.max( [ d3.max(elecUS), d3.max(elecUser), d3.max(elecUSNorm) ] );
+
+  var y = d3.scale.linear().domain([0,maxY]).range([ 0 + margin, h - margin]);
+  var x = d3.scale.linear().domain([0,13]).range([ 0 + margin, w - margin]);
+
+
+
+//Setup basix D3 containers...
+
+  var plt = d3.select("#monthlyPlot")
+              .append("svg:svg")
+              .attr("width",w)
+              .attr("height",h);
+
+  var g = plt.append("svg:g")
+             .attr("transform","translate(0,"+h+")");
+
+
+//Setup Axes
+
+  g.append("svg:line")
+      .attr("class","monthlyPlotAxis")
+      .attr("x1", x(0))
+      .attr("y1", -1 * y(0))
+      .attr("x2", x(13))
+      .attr("y2", -1 * y(0))
+
+  g.append("svg:line")
+      .attr("class","monthlyPlotAxis")
+      .attr("x1", x(0))
+      .attr("y1", -1 * y(0))
+      .attr("x2", x(0))
+      .attr("y2", -1 * y(maxY) )
+
+
+
+  g.selectAll(".yLabel")
+      .data(y.ticks(4))
+      .enter().append("svg:text")
+      .text(String)
+      .attr("x", x(0)-40)
+      .attr("y", function(d) { return -1 * y(d) })
+      .attr("text-anchor", "right")
+      .attr("dy", 4)
+
+
+
+  g.selectAll(".xTicks")
+      .data(x.ticks(10))
+      .enter().append("svg:line")
+      .attr("class","monthlyPlotTicks")
+      .attr("x1", function(d) { return x(d); })
+      .attr("y1", -1 * y(1)+10)
+      .attr("x2", function(d) { return x(d); })
+      .attr("y2", -1 * y(-0.3))
+
+  g.selectAll(".yTicks")
+      .data(y.ticks(4))
+      .enter().append("svg:line")
+      .attr("class","monthlyPlotTicks")
+      .attr("y1", function(d) { return -1 * y(d); })
+      .attr("x1", x(-0.2))
+      .attr("y2", function(d) { return -1 * y(d); })
+      .attr("x2", x(0))
+
+
+
+  g.selectAll(".yGrid")
+      .data(y.ticks(4))
+      .enter().append("svg:line")
+      .attr("class", "monthlyPlotGrid")
+      .attr("x1", function(d) { return x(0); })
+      .attr("y1", function(d) { return -1 * y(d); } )
+      .attr("x2", function(d) { return x(13); })
+      .attr("y2", function(d) { return -1 * y(d); } );
+
+
+
+//Draw monthly labels
+  var monthText = new Array();
+  for (var i=0; i<12; i++)
+  {
+    monthText[i] = g.append("svg:text")
+                    .attr("class","monthlyPlot")
+                    .attr("x",x(i+1)-10)
+                    .attr("y",-1*y(0)+25)
+                    .text(months[i]);
+  }
+
+
+//Draw Y Axis label
+  var plotTitle = g.append("svg:text")
+                   .attr("transform","rotate(270 "+(x(0)-margin+20)+", "+(-1*y( maxY )/2+50)+")")
+                   .attr("class","monthlyPlot")
+                   .attr("x",x(0)-margin+20)
+                   .attr("y",-1*y( maxY )/2+50)
+                   .attr("border","1px")
+                   .text("Electricity Consumption (kWh)");
+
+
+//This is the tool tip that will pop-up when the user mouse-overs the lines
+//Tells user what each line is.
+var tooltip = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .style("fill","white")
+    .style("background","white")
+    .style("border","1px solid")
+    .style("border-color","steelblue")
+    .style("box-shadow","5px 5px 5px #888888")
+    .text("a simple tooltip");
+
+
+
+
+
+
+
+//OKAY 1000 LINES LATER WE PLOT DATA!
+//In the future: install gnuplot on server. call gnuplot from some python script to generate a beautiful plot in 10 lines of code. serve up image.
+
+  var lineElec = d3.svg.line()
+                       .x(function(d,i) { return x(monthsIndex[d.month]); } )
+                       .y(function(d,i) { return -1 * y(d.use); } );
+
+
+
+  g.append("svg:path").attr("d",lineElec(elecUSOrdered))
+                      .style("stroke","tomato")
+                      .style("fill","none")
+                      .style("stroke-width","5")
+                      .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                      .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
+                      .on("mouseover", function(){return tooltip.text("U.S. Average Electricity Usage").style("visibility", "visible");});
+
+  g.append("svg:path").attr("d",lineElec(elecUSNorm))
+                      .style("stroke-width","5")
+                      .style("stroke","tomato")
+                      .style("fill","none")
+                      .style("stroke-dasharray","10,10")
+                      .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                      .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
+                      .on("mouseover", function(){return tooltip.text("Normalized U.S. Average Electricity Usage").style("visibility", "visible");});
+
+  g.append("svg:path").attr("d",lineElec(elecUserOrdered))
+                      .style("stroke","steelblue")
+                      .style("fill","none")
+                      .style("stroke-width","5")
+                      .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                      .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
+                      .on("mouseover", function(){return tooltip.text("Your Electricity Usage").style("visibility", "visible");});
+
+}
+
+
