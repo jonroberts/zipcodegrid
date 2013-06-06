@@ -434,7 +434,7 @@ var tooltip = d3.select("body")
 //In the future: install gnuplot on server. call gnuplot from some python script to generate a beautiful plot in 10 lines of code. serve up image.
 
   var lineElec = d3.svg.line()
-                       .x(function(d,i) { return x(monthsIndex[d.month]); } )
+                       .x(function(d,i) { return x(monthsIndex[d.month]+1); } )
                        .y(function(d,i) { return -1 * y(d.use); } );
 
 
