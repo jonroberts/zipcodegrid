@@ -1,31 +1,16 @@
-/*function exploreCity(){
-	$(".choice_input").css("display","none");
-}
-
-function go_to_zip(){
-	$("#step1").css("display","none");
-	$("#step2").css("display","inline");
-}
-
-
-
-function reset_choice_boxes(){
-	$("#step1").css("display","inline");
-	$("#step2").css("display","none");
-	$(".choice_input").css("display","none");
-	$("#zip_entry_string").text("Enter your Zip Code");
-	
-}*/
 
 function switch_map(arg){
 	map.current=arg;
 	g.selectAll("path").transition().duration(1000)
 	  .style("fill",function(d){return getColor(d);})	
-
+	$("#map_selector").blur();
 }
 
 function zip_chosen(input){
-	var zip_in="NY"+$("#zip_input").val();
+	var base=$("#zip_input").val();
+	var zip_in=base;
+	if(base.length==5){zip_in="NY"+$("#zip_input").val();}
+	$("#zip_input")[0].value=null;
 	if(zip_in in elec_pop){
 		zoom_to_zip(zip_in);
 	}
@@ -36,21 +21,39 @@ function zip_chosen(input){
 }
 
 function zoom_to_zip(zip_in){
-	//reset_choice_boxes();
 	var data=d3.select("#"+zip_in).datum();
 	click(data);
 }
 
+function goto_most(){
+	var most_zip="";
+	var key=map.current;
+	var tMax=map_details[map.current].max;
+	for(var i in zipcodes.features){
+		var zip=zipcodes.features[i];
+		if(zip[key]>=tMax){zoom_to_zip("NY"+zip.id); break;}
+	}
+	return false;
+}
+function goto_least(){
+	var most_zip="";
+	var key=map.current;
+	var tMin=map_details[map.current].min;
+	for(var i in zipcodes.features){
+		var zip=zipcodes.features[i];
+		if(zip[key]<=tMin){zoom_to_zip("NY"+zip.id); break;}
+	}
+	return false;	
+}
+
+
+
 function goto_map(){
 	$.scrollTo( '.map', 500);
-	$('#go_to_energy_comparison').show();
-	$('#go_to_map').hide();
 }
 
 function goto_energy_comp(){
 	$.scrollTo( '#energy_comparison', 500);
-	$('#go_to_energy_comparison').hide();
-	$('#go_to_map').show();
 }
 
 

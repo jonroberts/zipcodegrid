@@ -1,7 +1,7 @@
 
 var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1,"units":"kwh/person","num_decimal":0},
 				"kwh_house":{"name":"Electricity use per household","max":0,"min":-1,"units":"kwh/house","num_decimal":0},
-				"E_pct_income":{"name":"Percentage of income spent on electricity","max":0,"min":-1,"units":"percent of income","num_decimal":1},
+				"E_pct_income":{"name":"% of income spent on electricity","max":0,"min":-1,"units":"percent of income","num_decimal":1},
 				"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1,"units":"tax credits per household","num_decimal":2},
 				"E_tot_density":{"name":"Electricity density - total","max":0,"min":-1,"units":"kwh/m^2","num_decimal":0},
 				"E_density":{"name":"Residential energy density","max":0,"min":-1,"units":" residential kwh/m^2","num_decimal":0},
@@ -52,7 +52,6 @@ for(var key in map_details){
 			}
 */
 
-//var norms={"kwh_pop":0,"kwh_house":0,"kwh_household_income":0,"median_income":0,"pop":0};
 function initData(){
 	for(var i in zipcodes.features){
 		var zip=zipcodes.features[i];
@@ -81,8 +80,8 @@ var k=1;
 initData();
 
 var projection = d3.geo.albersUsa()
-	.scale(183300)
-	.translate([-53523.6,13034]);
+	.scale(183300*0.45)
+	.translate([-23700,5980]);
 
 var path = d3.geo.path().projection(projection);
 
@@ -96,8 +95,14 @@ var map = d3.select("body").append("svg")
 	.call(drag);
 map.current="kwh_pop";
 
+var background=map.append("rect")
+	.attr("class","background")
+    .attr("width", width)
+    .attr("height", height)
+	.on("click",function(){resetSidebar();});
+
 var g = map.append("g")
-    .attr("id", "states")
+    .attr("id", "zips")
 	.call(drag);
 
 function getColor(d){
@@ -109,6 +114,16 @@ function getColor(d){
 		return "lightgrey";
 	}
 }
+
+function getColorWithKey(d,key){
+	var ratio=(d[key]-map_details[key]["min"])*(255/(1.*map_details[key]["max"]-map_details[key]["min"]));
+	if(ratio>0){
+		return d3.hsl(255-ratio,0.4,0.5);
+	}else{
+		return "lightgrey";
+	}
+}
+
 
 g.selectAll("path")
 	  .data(zipcodes.features)
@@ -134,9 +149,12 @@ d3.select('html') // Selects the 'html' element
     });
 
 function mouseover(d){
-	var obj=d;
-	g.selectAll("path")
-      .style("opacity", function(d){return (d===obj)?1:0.7;});
+	g.append("path")
+	      .attr("d", d3.select(this).attr("d"))
+	      .attr("id", "arcSelection")
+	      .style("fill", "none")
+	      .style("stroke", "#fff")
+	      .style("stroke-width", 3 / k + "px");
 
 	var text="NY"+d.id;
 	if(d.id in neighborhoods){text+="<br/>"+neighborhoods[d.id]["neighborhood"];}
@@ -152,6 +170,8 @@ function mouseover(d){
 }
 
 function mouseout(){
+    d3.select("#arcSelection").remove();
+
 	$(".mouseover").text("");
 	$(".mouseover").css("display","none");
 }
@@ -168,6 +188,32 @@ function dragging(d){
 	y-=dy;
 	
 	g.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+}
+
+function zoom_in(){
+	k*=2.;
+	if(k>8){
+		k=8;
+	}
+	else{
+		g.transition()
+	      .duration(1000)
+	      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")	
+		  .style("stroke-width", 1 / k + "px");
+	}
+}
+function zoom_out(){
+	console.log("zooming out!")
+	k*=0.5;
+	if(k<1){
+		k=1;
+	}
+	else{
+		g.transition()
+	      .duration(1000)
+	      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")	
+		  .style("stroke-width", 1 / k + "px");
+	}
 }
 
 function anticlick(){
@@ -212,7 +258,7 @@ function click(d) {
     y = centroid[1];
     k = 4;
     centered = d;
-	$("#zip_input")[0].value=d.id;
+	//$("#zip_input")[0].value=d.id;
 
   } else {
 	$("#zip_input")[0].value=null;
@@ -224,13 +270,9 @@ function click(d) {
   }
   if(centered === d){
 	setSidebarContent(d);
-	//showSidebar();
   }
   else{
-	  //hideSidebar();
   }
-  g.selectAll("path")
-      .style("opacity", function(d){return (centered && (d===centered))?1:0.7;});
 
   g.transition()
       .duration(1000)
@@ -253,35 +295,33 @@ var suffix = function(n) {
 	return d > 3 && d < 21 ? 'th' : ['th', 'st', 'nd', 'rd'][d%10] || 'th';
 };
 function setSidebarContent(d){
-	if(d.pop==0){$("#sidebar > div > .title").html("Nobody lives here!");}
-	else if(d.id in neighborhoods){	$("#sidebar > div > .title").html(neighborhoods[d.id]["neighborhood"]);}
-	else{
-		$("#sidebar > div > .title").html("");
-	}
+	if(d.pop==0){$("#zip_details > div.title").html("<p>NY"+d.id+"</p><p>Nobody lives here!</p>");}
+	else if(d.id in neighborhoods){	$("#zip_details > div.title").html("NY"+d.id+": "+neighborhoods[d.id]["neighborhood"]);}
+	else{ $("#zip_details > div.title").html("NY"+d.id);}
 	var content="";
 	if(d.pop>0){
 		
-		content+="<h4>Energy per person: "+(d.kwh_pop).toFixed(0)+"kwh</h4>";
-		var color="green";
-		if (d.rank_kwh_pop < 175/2.){color="red"}
+		content+="<p>Energy per person: "+(d.kwh_pop).toFixed(0)+"kwh</p>";
+		var color=getColorWithKey(d,"kwh_pop");
 		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_pop).toFixed(0)+suffix(d.rank_kwh_pop)+"</span> of <span class='out_of'>175</span>  </p>";
 
-		content+="<h4>Energy per household: "+(d.kwh_house).toFixed(0)+"kwh</h4>";
-		color="green";
-		if (d.rank_kwh_house < 175/2.){color="red"}
+		content+="<p>Energy per household: "+(d.kwh_house).toFixed(0)+"kwh</p>";
+		color=getColorWithKey(d,"kwh_house");
 		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+"</span> of <span class='out_of'>175</span> </p>";
-
-		var total_kwh=d.pop*d.kwh_pop;
-		var energies=energy_conversion(d.kwh_house);
-		content+="<h3>C02 per household:</h3><h3 style='text-align:center; color:"+color+"'>"+energies.CO2.toFixed(0)+" pounds/year</h3>";
-
 	}  
-	$("#sidebar > div > .content").html(content);
+	$("#zip_details > div.content").html(content);
+	$("#zip_details").show();
+	$("#map_intro").hide();
+}
+
+function resetSidebar(){
+	$("#zip_details").hide();
+	$("#map_intro").show();
 }
 
 function resize(){
 	width=window.innerWidth;
-	height=window.innerHeight-25;
+	height=window.innerHeight;
 
 	$(".choice_box").css("margin-top",(height-300)/2.);
 	$(".map").width(width);

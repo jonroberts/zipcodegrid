@@ -12,7 +12,7 @@ a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
-dl, dt, dd, ol, ul, li,
+dl, dt, dd, ol,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed, 
@@ -52,20 +52,25 @@ table {
 	border-spacing: 0;
 }
 
-
 .background {
   fill: none;
   pointer-events: all;
 }
 
-#states {
+#zips {
   fill: #aaa;
   stroke: #fff;
   stroke-width: 1px;
 }
+.background{
+	opacity: 0;
+}
 
-#states .active {
-  fill: orange;
+
+p{
+	line-height: 1.05;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 div.mouseover{
@@ -88,41 +93,55 @@ div.choice_input{
 
 div#sidebar{
 	position: absolute;
-	margin-top: 85px;
-	margin-left: 20px;
+	margin-top: 10px;
+	margin-left: 10px;
 }
 div#sidebar div.card{
-	padding: 10px 10px 10px 15px;
-	background: rgba(255,255,255,0.95);
-	box-shadow: 0px 3px 10px rgba(0,0,0,0.3);
-	width: 275px;
-	margin-bottom: 14px;
+	padding: 10px 10px 10px 10px;
+	background: rgb(255,255,255);
+	border: 1px solid lightgrey;
+	width: 250px;
+	margin-bottom: 10px;
 }
 
 div#sidebar .title{
+	text-align: center;
+	font-weight: 300;
 	margin-top: 10px;
 }
 
-div#go_to_zip{
-	padding: 10px 10px 10px 15px;
-	background: rgba(255,255,255,0.95);
-	/*border: 1px solid #a4a4a4;*/
-	box-shadow: 0px 3px 10px rgba(0,0,0,0.3);
-	position: absolute;
-	width: 275px;
-	margin-top: 20px;
-	margin-left: 20px;
-}
-div#go_to_zip input{
+div.card input{
 	border: none;
-	width: 100%;
+	width: 98%;
+	padding: 0px;
+	margin: 0px;
 }
 
+#map_picker select {
+   background: transparent;
+   width: 280px;
+   margin-left: -3px;
+   padding: 5px;
+   padding-left: 8px;
+   font-size: small;
+   font-weight: 100;
+   border: 1px solid white;
+   height: 34px;
+    -webkit-appearance: none;
+} 
+
+#map_picker{
+   width: 250px;
+   height: 34px;
+   overflow: hidden;
+
+   background: url(./static/imgs/arrow.png) no-repeat 96% #efefef;
+}
 
 .form_input{
-	width: 194px;
-	font-size: large;
-	padding: 3px;
+	width: 100%;
+	font-size: medium;
+	padding: 2px;
 	text-align: center;
 }
 
@@ -173,27 +192,6 @@ button.submit_button{
 	padding: 10px;
 }
 
-div.switchers{
-	margin-left: 15px;
-	margin-top: -43px;
-}
-div.switchers div{
-	/*width: 30px;
-	height: 30px;*/
-	padding: 5px;
-	padding-bottom: 2px;
-	margin-left: 5px;
-	margin-bottom: 5px;
-	border: 1px solid #b6b6b6;
-	background: rgba(255,255,255,0.95);
-	display: inline-block;
-	cursor: hand;
-	cursor: pointer;
-}
-div.switchers img{
-	cursor: hand;
-	cursor: pointer;
-}
 span.ranking, span.out_of, span.more, span.less{
 	font-weight: bolder;
 	font-size:x-large;
@@ -206,6 +204,9 @@ span.less{
 	color:green;
 }
 
+ul.options li{
+	padding: 2px;
+}
 .ex {
   width: 48%;
   margin-right: 2%;
@@ -214,9 +215,6 @@ span.less{
   *zoom: 1;
 }
  
-.gradient{
-}
-
 #color-legend {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iNTAlIiB4Mj0iMTAwJSIgeTI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzJhYzM2MyIvPjxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjY2Q4YzE0Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjOWM0Y2MyIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
   background-size: 100%;
@@ -225,30 +223,66 @@ span.less{
   background-image: -moz-linear-gradient(left, hsl(0,80%, 50%), hsl(80,80%, 50%), hsl(255,80%, 50%));
   background-image: -o-linear-gradient(left, hsl(0,80%, 50%), hsl(80,80%, 50%), hsl(255,80%, 50%));
   background-image: linear-gradient(left, hsl(0,80%, 50%), hsl(80,80%, 50%), hsl(255,80%, 50%));
-  width: 178px;
-  height: 20px;
+  width: 100%;
+  height: 34px;
   opacity: 0.7;
   /*margin-left:auto;
   margin-right:auto;*/
   /*margin-bottom: 5px;*/
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 0px;
+  padding: 0px;
   display: inline-block;
 }
 
 .legend{
 	padding-top: 3px;
-	width: 95%;
+	width: 100%;
 }
 .legend span{
 	margin-top: 2px;
 }
+.legend_label{
+	color: white;
+	padding: 6px;
+	padding-top: 6px;
+}
 
-div#go_to_energy_comparison, div#go_to_map{
+div#go_to_map{
 	text-align:right;
-	margin-top: -18px;
 	cursor: hand;
 	cursor: pointer;
+	color: darkred;
+}
+.clickable{
+	cursor: hand;
+	cursor: pointer;
+}
+#zoom_container{
+	position: absolute;
+	width: 25px;
+	padding-top: 5px;
+	right: 10px;
+}
+#zoom_in, #zoom_out{
+	/*margin-left: auto;*/
+	margin-right: 10px;
+	/*margin-left: 300px;*/
+	background: white;
+	width: 25px;
+	height: 25px;
+	border: 1px solid lightgrey;
+	margin-top: 5px;
+}
+.zoom_tick{
+	/*position: absolute;*/
+	right: 0px;
+	/*margin-left: auto;*/
+	margin-right: 10px;
+	background: white;
+	width: 25px;
+	height: 5px;
+	border: 1px solid grey;
+	margin-top: 5px;
 }
 </style>
 </head>
@@ -257,28 +291,53 @@ div#go_to_energy_comparison, div#go_to_map{
 <!--<div style="width: 100%; height:20px; text-align: right;"><span id="tag" style="margin-right:10px;">Test</span></div>-->
 <div class="mouseover"></div>
 
-<div id="go_to_zip">
-	<form onsubmit="zip_chosen(this); return false;">
-		<input name="zip_input" id="zip_input" class="form_input" type="number" placeholder="Search for a zipcode"/>
-	</form>
+<div id="sidebar">
+	<div class="card">
+		<form onsubmit="zip_chosen(this); return false;">
+			<input name="zip_input" id="zip_input" class="form_input" placeholder="Search for a zipcode"/>
+		</form>
+	</div>
+	<!--<img src="static/imgs/cross.png" onclick="hideSidebar(); anticlick();" style="float:right; cursor: hand; cursor: pointer;"/>-->
+	<div class="card" id="map_intro">
+		<div class="title">Welcome to Energy Zip</div>
+		<div class="content">
+			<p>Explore the map to learn about New York's energy use. To learn more:</p>
+			<ul class="options">
+			<li>&#9657; Hover over a zipcode</li>
+			<li>&#9657; Search for a zipcode</li>
+			<li>&#9657; Change the data set</li>
+			<li>&#9657; <a href="#energy_comparison">See how you compare</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="card" id="zip_details" style="display:none;">
+		<div class="title"></div>
+		<div class="content">
+		</div>
+	</div>
+	<div id="map_details" class="card">
+		<p  class="title">Change the data set:</p>
+		<form id="map_picker" style="display:none"><select id="map_selector" onchange="switch_map(this.value);"></select></form>
+		<div class="legend">
+			<div class='gradient' id="color-legend">
+			<span class="legend_label" style="float:left">High</span>
+			<span class="legend_label" style="float:right">Low</span>
+			</div>
+		</div>
+
+		<ul class="options">
+		<li>&#9657; <a href="" id="goto_most">Who uses the most?</a></li>
+		<li>&#9657; <a href="" id="goto_least">Who uses the least?</a></li>
+		<li>&#9657; <a id="to_bottom" href="#energy_comparison">How do you compare?</a></li>
+		</ul>
+	</div>
+</div>
+<div id="zoom_container">
+	<img id="zoom_in" class="clickable" src="./static/imgs/plus.jpg"/>
+	<img id="zoom_out" class="clickable" src="./static/imgs/minus.jpg"/>
 </div>
 
-<div id="sidebar">
-	<!--<img src="static/imgs/cross.png" onclick="hideSidebar(); anticlick();" style="float:right; cursor: hand; cursor: pointer;"/>-->
-	<div class="card">
-	<h3 class="title">Welcome to Energy Zip</h3>
-	<div class="content">
-		<p>Click a zipcode to explore the energy use.</p>
-		<p>Click an icon at the bottom of the map to view energy use by household, population, or look at the median income per zipcode.</p> 
-		<p>Scroll down the page to see how your energy use compares to your neighborhood.</p>
-		<p><a href="#energy_comparison">How does my energy use compare?</a></p>
-	</div>
-	</div>
-	<div class="card">
-		<form id="map_picker" style="display:none"><select id="map_selector" onchange="switch_map(this.value);"></select></form>
-		<div class="legend"><span style="float:left">High</span><div class='gradient' id="color-legend"></div><span style="float:right">Low</span></div>
-	</div>
-</div>
+<!--<img  style="float:right; position: absolute; right: 10px; top: 10px; margin-top: 100px; border: 1px solid grey;" src="./static/imgs/plus.jpg"/>-->
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
@@ -291,22 +350,23 @@ div#go_to_energy_comparison, div#go_to_map{
 <script src="./static/scripts/controls.js"></script>
 <!-- sets the easing -->
 <script>
-$('div.content a').click(function(){//$.scrollTo works EXACTLY the same way, but scrolls the whole screen
+$('div.content a').click(function(){
 		$.scrollTo( this.hash, 500);
 		return false;
 	});
+$('#to_bottom').click(function(){
+		$.scrollTo( this.hash, 500);
+		return false;
+	});
+$("#zoom_in").click(function(){zoom_in();});
+$("#zoom_out").click(function(){zoom_out();});
+$("#goto_most").click(function(){goto_most();return false;})
+$("#goto_least").click(function(){goto_least();return false;})
 </script>
 
-<!--
-<div class="switchers">
-	<div onclick="switchMeasure(this,'kwh_pop');" class="switcher_button"><img src="./static/imgs/kwh_by_pop.png" title="Electricity use per person"/></div>
-	<div onclick="switchMeasure(this,'kwh_house');" class="switcher_button"><img src="./static/imgs/kwh_by_house.png" title="Electricity use per household"/></div>
-	<div onclick="switchMeasure(this,'median_income');" class="switcher_button"><img src="./static/imgs/glyphicons_227_usd.png" title="Median income"/></div>
-</div>-->
-
 <div id="energy_comparison">
-<div id="go_to_energy_comparison" onclick="goto_energy_comp();">How does your usage compare? &or;</div>
-<div id="go_to_map" onclick="goto_map();" style="display:none;">Check out the map &and;</div>
+<!--<div id="go_to_energy_comparison" onclick="goto_energy_comp();" style>How does your usage compare? &or;</div>-->
+<div id="go_to_map" onclick="goto_map();">Check out the map &and;</div>
 <div class="pw_content">
 <h2>Compare your energy use</h2>
 <p>How does your energy use stack up against others in your zipcode? Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your use compares.</p>
