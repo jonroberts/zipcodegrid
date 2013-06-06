@@ -31,6 +31,8 @@ def readZipCodeNeighbourhoodMap():
 def convertEnergyTSV():
 	file=open("./data/ZipCodeData_3.2.tsv")
 	kwh_price = 0.27 # dollars/kWh
+	mi2m = 1609.344
+	sqmi_to_m2 = mi2m**2
 	data={}
 	kwh_by_pop=[]
 	kwh_by_house=[]
@@ -82,10 +84,10 @@ def convertEnergyTSV():
 			entry["kwh_household_income"]=0
 				
 		if float(vals[6])>0: # add energy densities
-			entry["E_density"]      = float(vals[1])/float(vals[6])
-			entry["E_comm_density"] = float(vals[9])/float(vals[6])
-			entry["E_inst_density"] = float(vals[11])/float(vals[6])
-			entry["E_tot_density"]  = (float(vals[1])+float(vals[9])+float(vals[11]))/float(vals[6])
+			entry["E_density"]      = float(vals[1])/float(vals[6])/sqmi_to_m2
+			entry["E_comm_density"] = float(vals[9])/float(vals[6])/sqmi_to_m2
+			entry["E_inst_density"] = float(vals[11])/float(vals[6])/sqmi_to_m2
+			entry["E_tot_density"]  = (float(vals[1])+float(vals[9])+float(vals[11]))/float(vals[6])/sqmi_to_m2
 		else:
 			entry["E_density"]      = 0
 			entry["E_comm_density"] = 0
