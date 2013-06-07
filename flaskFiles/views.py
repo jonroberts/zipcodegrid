@@ -75,7 +75,7 @@ def get_estimate():
 	ratio, average_ratio, normalized_ratio, metric, annual_usage = analyze_user(monthly_data, usage_by_unit, US_norm)
 
 	pred_use, pred_uncert = predict_all_months(monthly_data, US_norm)
-	response=make_response(json.dumps({"num_in_house":num_in_house, "zipcode":zipcode, "us_monthly":US_norm, "ratio":ratio, "average_ratio":average_ratio, "normalized_ratio":normalized_ratio, "metric":metric, "annual_usage":annual_usage, "predicted_usage":pred_use, "predicted_uncertainty":pred_uncert, "zipcode_usage": usage_by_unit }))
+	response=make_response(json.dumps({"num_in_house":num_in_house, "zipcode":zipcode, "us_monthly":US_norm, "ratio":ratio, "average_ratio":average_ratio, "normalized_ratio":normalized_ratio, "metric":metric, "annual_usage":annual_usage, "predicted_usage":pred_use, "predicted_uncertainty":pred_uncert, "zipcode_usage": usage_by_unit, "monthly_usage" : monthly_data }))
 	response.headers.add("Access-Control-Allow-Origin","*")
 	return response
 
