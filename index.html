@@ -289,6 +289,10 @@ text.monthlyPlot {
     font-family: arial;
     font-size: 12pt;
 }
+text.monthlyPlotTitle {
+    font-family: arial;
+    font-size: 14pt;
+}
 </style>
 </head>
 <body onresize="resize()" onload="init();">
@@ -413,12 +417,12 @@ $("#goto_least").click(function(){goto_least();return false;})
 <div>
 <h4> Our datasets</h4>
 	<ul>
-		<li><a href="">Census 2010</a></li>
-		<li><a href="">ACS</a></li>
-		<li><a href="">EIA</a></li>
+		<li>NYC Open Data: <a href="https://data.cityofnewyork.us/Environmental-Sustainability/Electric-Consumption-by-ZIP-Code-2010/74cu-ncm4">2010 Electricity Use</a></li>
+		<li>Energy Information Administration: <a href="http://www.eia.gov/electricity/data/browser/#/topic/5?agg=0,1&geo=g&linechart=ELEC.SALES.US-ALL.M~ELEC.SALES.US-RES.M~ELEC.SALES.US-COM.M~ELEC.SALES.US-IND.M&columnchart=ELEC.SALES.US-ALL.M~ELEC.SALES.US-RES.M~ELEC.SALES.US-COM.M~ELEC.SALES.US-IND.M&map=ELEC.SALES.US-ALL.M&freq=M&ctype=linechart&ltype=pin&pin=&rse=0&maptype=0&endsec=vg">Monthly Electricity Usage</a></li>
+		<li>Census 2010: <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=DEC_10_SF1_P1&prodType=table">Population</a>, <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=DEC_10_SF1_QTP11&prodType=table">Households</a></li>
+		<li>American Community Survey 2011: <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_11_5YR_S1903&prodType=table">Income</a>, <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_11_5YR_B25077&prodType=table">Home Value</a></li>
 		<li><a href="">Zipcode Shapefiles</a></li>
-		<li><a href="">Tax Credits</a></li>
-		<li><a href="">Electricity Use</a></li>
+		<li><a href="http://www.zip-codes.com/zip-code/10003/zip-code-10003.asp">Tax Credits</a></li>
 	</ul>
 </div>
 <div>
