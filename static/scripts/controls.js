@@ -173,7 +173,6 @@ function fill_report_card(udata)
 	var elecPred = new Array();	
 	var elecPredUncert = new Array();
 
-//	alert(udata["zipcode_usage"]);
 
 	for (key in udata["us_monthly"])
 	{
@@ -187,9 +186,9 @@ function fill_report_card(udata)
 		sss+=udata["ratio"][key]*udata["us_monthly"][key];
 		count++;
 	}
-	for (key in udata["ratio"])
+	for (key in udata["monthly_usage"])
 	{
-		elecUser[key] = udata["ratio"][key]*udata["us_monthly"][key]*udata["annual_usage"]/sss*(count/12.0);// *udata["annual_usage"];//
+		elecUser[key] = udata["monthly_usage"][key];//*udata["us_monthly"][key]*udata["annual_usage"]/sss*(count/12.0);// *udata["annual_usage"];//
 	}
 
 	for (key in udata["predicted_usage"])//["predicted_usage"])
@@ -489,14 +488,14 @@ function DrawLineChart(elecUser, elecUS, elecPred, elecPredUncert, average_ratio
                    .attr("x",x(0)-margin+20)
                    .attr("y",-1*y( maxY )/2+50)
                    .attr("border","1px")
-                   .text("Electricity Consumption (kWh)");
+                   .text("Electricity Usage (kWh)");
 
 
 
 //Draw plot title
   var plotTitle = g.append("svg:text")
                    .attr("class","monthlyPlotTitle")
-                   .attr("x",w/2-200)
+                   .attr("x",w/2-100)
                    .attr("y",-1*y(maxY)-margin/2)
                    .text("Monthly Electricity Usage");
 
@@ -532,7 +531,7 @@ var tooltip = d3.select("body")
   var areaElec = d3.svg.area()
                        .x(function(d,i) { return x(monthsIndex[d.month]+1); } )
                        .y1(function(d,i) { return -1 * y(d.use-d.use_uncert); } )
-                       .y0(function(d,i) { return -1 * y(d.use+d.use_uncert); } );
+                       .y0(function(d,i) { return -1 * y(d3.max( [ d.use+d.use_uncert,0.0 ] ) ); } );
                        
 
   g.append("svg:path").attr("d",areaElec(elecPredOrdered))
@@ -550,7 +549,7 @@ var tooltip = d3.select("body")
                       .style("stroke-width","5")
                       .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
                       .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
-                      .on("mouseover", function(){return tooltip.text("Your neighborhoods Electricity Usage").style("visibility", "visible");});
+                      .on("mouseover", function(){return tooltip.text("Your Neighborhoods Electricity Usage").style("visibility", "visible");});
 
 /*
   g.append("svg:path").attr("d",lineElec(elecUSNorm))
