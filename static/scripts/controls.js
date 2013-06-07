@@ -71,13 +71,16 @@ function analyse_usage(form){
 		data[entry.name]=entry.value;
 		count+=1;
 	}
-	if(count<4){
-		$('#energy_error_message').html("Please enter data for at least 2 months");
+	if(count<3){
+		$('#energy_error_message').html("Please enter data for at least 3 months");
 		$('#energy_error').show();
 		return false;
 	}
-	
-	var urlString="http://www.ezip.jrsandbox.com/get_estimate"
+	if($("#record_data").is(":checked")){data["record_data"]=1;}
+	else{data["record_data"]=0;}
+
+	//var urlString="http://www.ezip.jrsandbox.com/get_estimate"
+	var urlString="http://energyzip.org/get_estimate"
 	var jhxr=$.ajax({
 		type:"GET",
 		url:urlString,

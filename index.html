@@ -419,7 +419,7 @@ $("#goto_least").click(function(){goto_least();return false;})
 <div class="pw_content">
 <h3>Compare your electricity use</h3>
 <p style="text-align: left">Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your usage compares.</p>
-<p style="text-align: left">We're building the first ever public record of New York's seasonal energy use (<a href="http://nycbigapps.com/project/270/Energy-Zip">here's why that's a good thing</a>). We'll only ever use zipcodes and kwh to create the public database, so your summer A/C habit will remain anonymous. But if you would prefer not to have your data recorded, or if you're just testing the app, please uncheck this box <input type="checkbox" checked="true" name="record_data"/>
+<p style="text-align: left">We're building the first ever public record of New York's seasonal energy use (<a href="http://nycbigapps.com/project/270/Energy-Zip">here's why that's a good thing</a>). We'll only ever use zipcodes and kwh to create the public database, so your summer A/C habit will remain anonymous. But if you would prefer not to have your data recorded, or if you're just testing the app, please uncheck this box <input type="checkbox" checked="true" id="record_data" name="record_data"/>
 <form onsubmit="analyse_usage(this); return false;">
 <h4>What's your zipcode?</h4><input name="zip_in" type="number" required="true"><br/>
 <h4>How many people live in your household?</h4><input name="num_in_house" type="number" required="true"><br/>
