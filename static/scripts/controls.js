@@ -153,13 +153,17 @@ function fill_report_card(udata)
 		savings = savings * -1.0;
 	}
 
-	var text="<h3>Electricity Report Card</h3>";
-	text+="<br/><h4>Total Electricity Use: <span class='"+fracsign+"'>" + fracGrade + "</span></h4><p>Your household uses <span class='"+fracsign+"'>"+Math.round(frac*100.0)+"% "+fracsign+"</span> electricity that the neighborhood average.</p>";
+	var text="";
+	text+="<h4>Total Electricity Use: <span class='"+fracsign+"'>" + fracGrade + "</span></h4><p>Your household uses <span class='"+fracsign+"'>"+Math.round(frac*100.0)+"% "+fracsign+"</span> electricity that the neighborhood average.</p>";
 	text += '<p>You <span class="'+fracsign+'">' + savingstext + 'save $' + Math.round(savings) + '</span> per year!</p><br/>'; 
 	text += '<p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavg) + ' kWh';
 	text += '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh</p><br/>';
-	text += '<h3>Seasonal Modulation: <span class="'+seasmodtext+'">' + seasmodgrade + '</span></h3> <p>You use <span class="'+seasmodtext+'">' + Math.round(seasfrac*100) + '% ' + seasmodtext + '</span> electricity in the summer, relative to the winter,  compared to the U.S. average.</p><br/>';
-	text += '<p>Not happy with your energy usage or seasonal variation? Check out these programs to help you increase your energy efficiency';
+	text += '<h4>Seasonal Modulation: <span class="'+seasmodtext+'">' + seasmodgrade + '</span></h4> <p>You use <span class="'+seasmodtext+'">' + Math.round(seasfrac*100) + '% ' + seasmodtext + '</span> electricity in the summer, relative to the rest of the year,  compared to the U.S. average.</p><br/>';
+	$("#report_card").html(text);
+
+
+	
+	var text = '<p>Not happy with your energy usage or seasonal variation? Check out these programs:';
 	text += '<ul>';
 	text += '<li><a href="http://www.nyc.gov/html/coolroofs/html/about/about.shtml">NYC Cool Roofs</a></li>';
 	text += '<li><a href="http://www.coned.com/energyefficiency/residential.asp"> ConEd Programs for Residential Efficiency</a></li>';
@@ -167,7 +171,7 @@ function fill_report_card(udata)
 	text += '<li><a href="http://www.nyserda.ny.gov/BusinessAreas/Energy-Efficiency-and-Renewable-Programs/Residential/Programs/Renewables.aspx"> NYSERDA Efficiency and Green Power Incentives</a></li>';
 	text += '<li><a href="http://www.nyserda.ny.gov/Energy-Efficiency-and-Renewable-Programs/Residential/Programs/Low-Income-Assistance.aspx"> NYSERDA Efficient Appliances Assistance</a></li>';
 	text += '</ul>';
-	$("#report_card").html(text);
+	$("#usage_advice").html(text);
 
 
 
@@ -241,7 +245,7 @@ function constructDateInput(){
 		var yearString=(inLastYear)?" '"+(y-1):" '"+y;
 		
 		input.append($("<input>").attr('class',"date-input").attr('name',key).attr("placeholder",key+yearString));
-		if(i%4==3){input.append("<br/>");}
+		if(i%6==5){input.append("<br/>");}
 	}
 }
 
@@ -270,7 +274,7 @@ function DrawLineChart(elecUser, elecUS, elecPred, elecPredUncert, average_ratio
 {
 
 
-  var w = 800;
+  var w = 650;
   var h = 400;
   var margin = 80;
 
@@ -587,6 +591,15 @@ var tooltip = d3.select("body")
                         .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
                         .on("mouseover", function(){return tooltip.text("Your Electricity Usage").style("visibility", "visible");});
 
+	var labelImage = './static/imgs/monthly_plot_label.png';
+  var labelWidth = 120;
+  var labelHeight = 60;
+
+  g.append("svg:image").attr("xlink:href", labelImage )
+                       .attr("width",labelWidth)
+                       .attr("height",labelHeight)
+                       .attr("x",w-labelWidth-margin*2/3)
+                       .attr("y",-1*h+margin*2/3);
 
 
 }

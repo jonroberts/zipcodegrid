@@ -186,14 +186,14 @@ function mouseover(d){
 	      .style("stroke-width", 3 / k + "px");
 
 	var text="NY"+d.id;
-	if(d.id in neighborhoods){text+="<br/>"+neighborhoods[d.id]["neighborhood"];}
+	if(d.id in neighborhoods){text+=": "+neighborhoods[d.id]["neighborhood"];}
 	if(d.pop>0){
 		if(d[map.current]>0){
 			text+="<br/>"+d[map.current].toFixed(map_details[map.current]["num_decimal"])+" "+map_details[map.current]["units"];} 
 		else{
 			text+="<br/>0 "+map_details[map.current]["units"];}
+		text+="<br/>Click for more information";
 	}
-
 	$(".mouseover").html(text);
 	$(".mouseover").css("display","inline");
 }

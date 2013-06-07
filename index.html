@@ -26,7 +26,8 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 	font-family: 'Roboto', helvetica, sans-serif;
-	font-weight: 100;
+	font-weight: 300;
+	color: #434343;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
@@ -34,7 +35,7 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 body {
-	line-height: 1;
+	line-height: 1.2;
 }
 ol, ul {
 	list-style: none;
@@ -309,6 +310,26 @@ ul#map_questions li{
 p.answer{
 	padding-left:0em;text-indent:0em;
 }
+
+div.footer_bar{
+	font-size: small;
+	float: left;
+	/*display: inline;*/
+	width:49%;
+	margin: 0;
+	padding: 0;
+	color: white;
+	text-decoration: none;
+	text-align: left;
+}
+div.footer_bar p{
+	line-height: 1.005;
+	-webkit-margin-before: 0.5em;
+	-webkit-margin-after: 0.5em;
+}
+div.footer_bar a,div.footer_bar a:hover,div.footer_bar a:visited{
+	color: white;
+}
 </style>
 </head>
 <body onresize="resize()" onload="init();">
@@ -330,7 +351,7 @@ p.answer{
 			<ul class="options">
 			<li>&#9657; Search for a zipcode</li>
 			<li>&#9657; Hover over a zipcode</li>
-			<li>&#9657; Click over a zipcode</li>
+			<li>&#9657; Click a zipcode</li>
 			<li>&#9657; Change the data set</li>
 			</ul>
 			<ul>
@@ -358,7 +379,7 @@ p.answer{
 		</div>
 		</ul>
 		<ul id="call_to_action">
-		<li>&#9657; <a id="to_bottom" href="#energy_comparison">How do you compare?</a></li>
+		<li>&#9657; <a id="to_bottom" href="#energy_comparison" style="font-weight: 500">How do you compare?</a></li>
 		</ul>
 	</div>
 </div>
@@ -366,8 +387,6 @@ p.answer{
 	<img id="zoom_in" class="clickable" src="./static/imgs/plus.jpg"/>
 	<img id="zoom_out" class="clickable" src="./static/imgs/minus.jpg"/>
 </div>
-
-<!--<img  style="float:right; position: absolute; right: 10px; top: 10px; margin-top: 100px; border: 1px solid grey;" src="./static/imgs/plus.jpg"/>-->
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
@@ -399,7 +418,8 @@ $("#goto_least").click(function(){goto_least();return false;})
 <div id="go_to_map" onclick="goto_map();">Check out the map &and;</div>
 <div class="pw_content">
 <h3>Compare your electricity use</h3>
-<p>How does your electricity use stack up against others in your zipcode?</p><p>Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your usage compares.</p>
+<p style="text-align: left">Enter as much information as you like - more data gives a more accurate comparison - and we'll tell you how your usage compares.</p>
+<p style="text-align: left">We're building the first ever public record of New York's seasonal energy use (<a href="http://nycbigapps.com/project/270/Energy-Zip">here's why that's a good thing</a>). We'll only ever use zipcodes and kwh to create the public database, so your summer A/C habit will remain anonymous. But if you would prefer not to have your data recorded, or if you're just testing the app, please uncheck this box <input type="checkbox" checked="true" name="record_data"/>
 <form onsubmit="analyse_usage(this); return false;">
 <h4>What's your zipcode?</h4><input name="zip_in" type="number" required="true"><br/>
 <h4>How many people live in your household?</h4><input name="num_in_house" type="number" required="true"><br/>
@@ -417,28 +437,26 @@ $("#goto_least").click(function(){goto_least();return false;})
 			<!--<h2 class="title"></h2>-->
 			<div id="report_card"><h3>Enter your details above to get an energy report.</h3></div>
 			<div id="monthlyPlot"></div>
+			<div id="usage_advice" style="text-align:left;"></div>
 		</div>
 	</div>
 </div>
-<div class="footer" style="background: grey; height: 250px; border-top: 1px solid black; color: white">
+<div class="footer" style="background: grey; height: 200px; border-top: 1px solid black; color: white">
 <div class="pw_content">
 
-<div>
-<h4> Our datasets</h4>
-	<ul>
-		<li>NYC Open Data: <a href="https://data.cityofnewyork.us/Environmental-Sustainability/Electric-Consumption-by-ZIP-Code-2010/74cu-ncm4">2010 Electricity Use</a></li>
-		<li>Energy Information Administration: <a href="http://www.eia.gov/electricity/data/browser/#/topic/5?agg=0,1&geo=g&linechart=ELEC.SALES.US-ALL.M~ELEC.SALES.US-RES.M~ELEC.SALES.US-COM.M~ELEC.SALES.US-IND.M&columnchart=ELEC.SALES.US-ALL.M~ELEC.SALES.US-RES.M~ELEC.SALES.US-COM.M~ELEC.SALES.US-IND.M&map=ELEC.SALES.US-ALL.M&freq=M&ctype=linechart&ltype=pin&pin=&rse=0&maptype=0&endsec=vg">Monthly Electricity Usage</a></li>
-		<li>Census 2010: <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=DEC_10_SF1_P1&prodType=table">Population</a>, <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=DEC_10_SF1_QTP11&prodType=table">Households</a></li>
-		<li>American Community Survey 2011: <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_11_5YR_S1903&prodType=table">Income</a>, <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_11_5YR_B25077&prodType=table">Home Value</a></li>
-		<li><a href="">Zipcode Shapefiles</a></li>
-		<li><a href="http://www.zip-codes.com/zip-code/10003/zip-code-10003.asp">Tax Credits</a></li>
-	</ul>
+<div class="footer_bar">
+<h4>Datasets:</h4>
+<p>NYC Open Data: <a href="https://data.cityofnewyork.us/Environmental-Sustainability/Electric-Consumption-by-ZIP-Code-2010/74cu-ncm4">2010 Electricity Use</a></p>
+<p>Energy Information Administration: <a href="http://www.eia.gov/electricity/data/browser/#/topic/5?agg=0,1&geo=g&linechart=ELEC.SALES.US-ALL.M~ELEC.SALES.US-RES.M~ELEC.SALES.US-COM.M~ELEC.SALES.US-IND.M&columnchart=ELEC.SALES.US-ALL.M~ELEC.SALES.US-RES.M~ELEC.SALES.US-COM.M~ELEC.SALES.US-IND.M&map=ELEC.SALES.US-ALL.M&freq=M&ctype=linechart&ltype=pin&pin=&rse=0&maptype=0&endsec=vg">Monthly Electricity Usage</a></p>
+<p>Census 2010: <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=DEC_10_SF1_P1&prodType=table">Population</a>, <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=DEC_10_SF1_QTP11&prodType=table">Households</a></p>
+<p>American Community Survey 2011: <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_11_5YR_S1903&prodType=table">Income</a>, <a href="http://factfinder2.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_11_5YR_B25077&prodType=table">Home Value</a></p>
+<p>Pediacities: <a href="http://nycdata.pediacities.com/dataset/nyc-zip-code-tabulation-areas">Zipcode Shapefiles</a></p>
+<p>Tax Credits: <a href="http://www.zip-codes.com/zip-code/10003/zip-code-10003.asp">Data Files</a></p>
 </div>
-<div>
-<ul>
-<a href="http://nycbigapps.com/project/270/Energy-Zip">BigApps Project Page</a>
-<li><a href="mailto:admin@energyzip.org">Contact us</a></li>
-</ul>
+<div class="footer_bar">
+<h4>Links:</h4>
+<p><a href="http://nycbigapps.com/project/270/Energy-Zip">BigApps Project Page</a></p>
+<p><a href="mailto:admin@energyzip.org">Contact us</a></p>
 </div>
 
 </div>
