@@ -1,5 +1,9 @@
 
-var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1,"units":"kwh/person","num_decimal":0},
+var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1,"units":"kwh/person","num_decimal":0,
+					"questions":[
+						{"question":"this is a question","answer":"this is the answer","zipcode":"NY10012"},
+						{"question":"this is another question","answer":"this is an answer with a <a href='www.thisisatest.com' target=_blank>link answer</a>","zipcode":""} // this has no zipcode so will not jump to a location.
+					]},
 				"kwh_house":{"name":"Electricity use per household","max":0,"min":-1,"units":"kwh/house","num_decimal":0},
 				"E_pct_income":{"name":"% of income spent on electricity","max":0,"min":-1,"units":"percent of income","num_decimal":1},
 				"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1,"units":"tax credits per household","num_decimal":2},
@@ -190,6 +194,22 @@ function dragging(d){
 	g.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
 }
 
+function fill_questions(){
+	var qs=$("#extra_questions")
+	for(var i in map_details[map.current]["questions"]){
+		question=map_details[map.current]["questions"][i]["question"];
+		answer=map_details[map.current]["questions"][i]["answer"];
+		zipcode=map_details[map.current]["questions"][i]["zipcode"];
+		text=""
+		if(zipcode!=""){
+				text+="<li>&#9657; <a href='' onclick='zoom_to_zip(\"NY"+zipcode+"\");showAnswer();return false;'>"+question+"</a></li>";
+			}
+		else{text="<li>&#9657; <a href='' onclick='showAnswer(); return false;'>"+question+"</a></li>"}
+		
+		qs.append($("<option>").attr('value',key).attr('name',key).text(map_details[key]["name"]));
+	}
+}
+
 function zoom_in(){
 	k*=2.;
 	if(k>8){
@@ -332,4 +352,5 @@ function init(){
 	var sel = $('#map_selector');
 	for(var key in map_details){sel.append($("<option>").attr('value',key).attr('name',key).text(map_details[key]["name"]));}
 	$('#map_picker').show();
+	constructDateInput();
 }

@@ -4,6 +4,7 @@ function switch_map(arg){
 	g.selectAll("path").transition().duration(1000)
 	  .style("fill",function(d){return getColor(d);})	
 	$("#map_selector").blur();
+	fill_questions();
 }
 
 function zip_chosen(input){
@@ -46,8 +47,6 @@ function goto_least(){
 	return false;	
 }
 
-
-
 function goto_map(){
 	$.scrollTo( '.map', 500);
 }
@@ -56,11 +55,6 @@ function goto_energy_comp(){
 	$.scrollTo( '#energy_comparison', 500);
 }
 
-
-function switchMeasure(button,key){
-	g.selectAll("path").transition().duration(1000)
-	  .style("fill",function(d){return getColor(d,key)})	
-}
 
 function analyse_usage(form){	
 	var data={};
@@ -200,6 +194,38 @@ function buildDateOrderedMonthKey(){
 	}
 	return loc_keys;
 }
+
+function constructDateInput(){
+	var d = new Date();
+	var y = d.getFullYear()-2000; // 2 digit full year
+
+	var loc_keys=buildDateOrderedMonthKey();
+	var input = $('#date_input');
+
+	fields="";
+	var inLastYear=true;
+	for(var i in loc_keys)
+	{
+		var key=loc_keys[i];
+		if(key=="Jan"){inLastYear=false;}
+			
+		var yearString=(inLastYear)?" '"+(y-1):" '"+y;
+		
+		input.append($("<input>").attr('class',"date-input").attr('name',key).attr("placeholder",key+yearString));
+		if(i%4==3){console.log(i);input.append("<br/>");}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -466,5 +492,3 @@ var tooltip = d3.select("body")
                       .on("mouseover", function(){return tooltip.text("Your Electricity Usage").style("visibility", "visible");});
 
 }
-
-
