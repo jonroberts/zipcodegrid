@@ -155,7 +155,14 @@ function fill_report_card(udata)
 	text += '<p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavg) + ' kWh';
 	text += '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh</p><br/>';
 	text += '<h3>Seasonal Modulation: <span class="'+seasmodtext+'">' + seasmodgrade + '</span></h3> <p>You use <span class="'+seasmodtext+'">' + Math.round(seasfrac*100) + '% ' + seasmodtext + '</span> electricity in the summer, relative to the winter,  compared to the U.S. average.</p><br/>';
-
+	text += '<p>Not happy with your energy usage or seasonal variation? Check out these programs to help you increase your energy efficiency';
+	text += '<ul>';
+	text += '<li><a href="http://www.nyc.gov/html/coolroofs/html/about/about.shtml">NYC Cool Roofs</a></li>';
+	text += '<li><a href="http://www.coned.com/energyefficiency/residential.asp"> ConEd Programs for Residential Efficiency</a></li>';
+	text += '<li><a href="http://www.conedsolutions.com/GoGreen/Residential/NewYork_Green_Residential/CONEDISON_Green_Residential.aspx"> ConEd Green Power</a></li>';
+	text += '<li><a href="http://www.nyserda.ny.gov/BusinessAreas/Energy-Efficiency-and-Renewable-Programs/Residential/Programs/Renewables.aspx"> NYSERDA Efficiency and Green Power Incentives</a></li>';
+	text += '<li><a href="http://www.nyserda.ny.gov/Energy-Efficiency-and-Renewable-Programs/Residential/Programs/Low-Income-Assistance.aspx"> NYSERDA Efficient Appliances Assistance</a></li>';
+	text += '</ul>';
 	$("#report_card").html(text);
 
 
@@ -163,23 +170,42 @@ function fill_report_card(udata)
 	//Setup arrays for plotting the line chart...
 	var elecUser = new Array();
 	var elecUS = new Array();
-	
+	var elecPred = new Array();	
+	var elecPredUncert = new Array();
 
-
+	alert(udata["zipcode_usage"]);
 
 	for (key in udata["us_monthly"])
 	{
-		elecUS[key] = udata["us_monthly"][key]*udata["annual_usage"]/12.0;
+		elecUS[key] = udata["us_monthly"][key]*neighavg/12.0;
 	}
 
+	var sss=0.0;
+	var count=0.0;
 	for (key in udata["ratio"])
 	{
-		elecUser[key] = udata["ratio"][key]*udata["us_monthly"][key]*udata["annual_usage"]/12.0;
+		sss+=udata["ratio"][key]*udata["us_monthly"][key];
+		count++;
+	}
+	for (key in udata["ratio"])
+	{
+		elecUser[key] = udata["ratio"][key]*udata["us_monthly"][key]*udata["annual_usage"]/sss*(count/12.0);// *udata["annual_usage"];//
+	}
+
+	for (key in udata["predicted_usage"])//["predicted_usage"])
+	{
+		elecPred[_dateKeys[key]] = udata["predicted_usage"][key];//*udata["annual_usage"]/12.0;
+	}
+	for (key in udata["predicted_uncertainty"])//udata["predicted_uncertainty"])
+	{
+		elecPredUncert[_dateKeys[key]] = udata["predicted_uncertainty"][key];//*udata["annual_usage"]/12.0*0.1;
 	}
 
 
-	DrawLineChart(elecUser,elecUS,udata["average_ratio"]);
+	DrawLineChart(elecUser,elecUS,elecPred,elecPredUncert,udata["average_ratio"]);
 }
+
+
 
 var _dateKeys=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -234,10 +260,13 @@ function monthlyUseLine()
 {
 	this.month="";
 	this.use=0.0;
+	this.use_uncert=0.0;
 }
 
-function DrawLineChart(elecUser, elecUS, average_ratio)
+function DrawLineChart(elecUser, elecUS, elecPred, elecPredUncert, average_ratio)
 {
+
+
   var w = 800;
   var h = 400;
   var margin = 80;
@@ -254,8 +283,6 @@ function DrawLineChart(elecUser, elecUS, average_ratio)
 //elecNorm: Monthly average use for USA normalized to yearly usage of user : CALCULATED WITHIN THE FUNCTION
 
 
-  //var elecUser = [100,200,100,200,100,200,100,200,100,200,100,200];
-  //var elecUS = [200,400,300,400,540,680,760,800,700,600,400,300];
   var elecUSNorm = new Array;
   //var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   var months = buildDateOrderedMonthKey();
@@ -283,15 +310,35 @@ function DrawLineChart(elecUser, elecUS, average_ratio)
   }
 
   var elecUSOrdered = new Array();
+  ind=0;
   for (key in monthsIndex)
   {
-    elecUSOrdered[monthsIndex[key]] = new monthlyUseLine();
-    elecUSOrdered[monthsIndex[key]].month = key;
-    elecUSOrdered[monthsIndex[key]].use = elecUS[key];
+    if (elecUS[key])
+    {
+      elecUSOrdered[monthsIndex[key]] = new monthlyUseLine();
+      elecUSOrdered[monthsIndex[key]].month = key;
+      elecUSOrdered[monthsIndex[key]].use = elecUS[key];
+      ind++;
+    }
   }
 
 
-  for (i=0; i<12; i++)
+  var elecPredOrdered = new Array();
+  ind=0;
+  for (key in monthsIndex)
+  {
+    if (elecPred[key])
+    {
+      elecPredOrdered[ind] = new monthlyUseLine();
+      elecPredOrdered[ind].month = key;
+      elecPredOrdered[ind].use = elecPred[key];
+      elecPredOrdered[ind].use_uncert = elecPredUncert[key];
+      ind++;
+    }
+  }
+
+
+  for (i=0; i<elecUSOrdered.length; i++)
   {
     elecUSNorm[i] = new monthlyUseLine();
     elecUSNorm[i].month = elecUSOrdered[i].month;
@@ -324,6 +371,14 @@ function DrawLineChart(elecUser, elecUS, average_ratio)
     if (elecUSOrdered[i].use > maxY)
     {
       maxY = elecUSOrdered[i].use;
+    }
+  }
+
+  for (var i = 0; i<elecPredOrdered.length; i++)
+  {
+    if (elecPredOrdered[i].use+elecPredOrdered[i].use_uncert > maxY)
+    {
+      maxY = elecPredOrdered[i].use+elecPredOrdered[i].use_uncert;
     }
   }
 
@@ -428,13 +483,22 @@ function DrawLineChart(elecUser, elecUS, average_ratio)
 
 
 //Draw Y Axis label
-  var plotTitle = g.append("svg:text")
+  var yLabelText = g.append("svg:text")
                    .attr("transform","rotate(270 "+(x(0)-margin+20)+", "+(-1*y( maxY )/2+50)+")")
                    .attr("class","monthlyPlot")
                    .attr("x",x(0)-margin+20)
                    .attr("y",-1*y( maxY )/2+50)
                    .attr("border","1px")
                    .text("Electricity Consumption (kWh)");
+
+
+
+//Draw plot title
+  var plotTitle = g.append("svg:text")
+                   .attr("class","monthlyPlotTitle")
+                   .attr("x",w/2-200)
+                   .attr("y",-1*y(maxY)-margin/2)
+                   .text("Monthly Electricity Usage");
 
 
 //This is the tool tip that will pop-up when the user mouse-overs the lines
@@ -465,6 +529,20 @@ var tooltip = d3.select("body")
                        .y(function(d,i) { return -1 * y(d.use); } );
 
 
+  var areaElec = d3.svg.area()
+                       .x(function(d,i) { return x(monthsIndex[d.month]+1); } )
+                       .y1(function(d,i) { return -1 * y(d.use-d.use_uncert); } )
+                       .y0(function(d,i) { return -1 * y(d.use+d.use_uncert); } );
+                       
+
+  g.append("svg:path").attr("d",areaElec(elecPredOrdered))
+                      .style("stroke","grey")
+                      .style("fill","grey")
+                      .style("stroke-width","5")
+                      .style("opacity","0.5")
+                      .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                      .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
+                      .on("mouseover", function(){return tooltip.text("Your Estimated Seasonal Variation").style("visibility", "visible");});
 
   g.append("svg:path").attr("d",lineElec(elecUSOrdered))
                       .style("stroke","tomato")
@@ -472,8 +550,9 @@ var tooltip = d3.select("body")
                       .style("stroke-width","5")
                       .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
                       .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
-                      .on("mouseover", function(){return tooltip.text("U.S. Average Electricity Usage").style("visibility", "visible");});
+                      .on("mouseover", function(){return tooltip.text("Your neighborhoods Electricity Usage").style("visibility", "visible");});
 
+/*
   g.append("svg:path").attr("d",lineElec(elecUSNorm))
                       .style("stroke-width","5")
                       .style("stroke","tomato")
@@ -482,6 +561,7 @@ var tooltip = d3.select("body")
                       .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
                       .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
                       .on("mouseover", function(){return tooltip.text("Normalized U.S. Average Electricity Usage").style("visibility", "visible");});
+*/
 
   g.append("svg:path").attr("d",lineElec(elecUserOrdered))
                       .style("stroke","steelblue")
@@ -491,4 +571,21 @@ var tooltip = d3.select("body")
                       .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
                       .on("mouseover", function(){return tooltip.text("Your Electricity Usage").style("visibility", "visible");});
 
+  g.selectAll("circles").data(elecUserOrdered)
+                        .enter()
+                        .append("circle")
+                        .attr("cx",function (d,i) { return x(monthsIndex[d.month]+1); } )
+                        .attr("cy",function (d,i) { return -1 * y(d.use); } )
+                        .attr("r", "5")
+                        .style("stroke","steelblue")
+                        .style("fill","steelblue")
+                        .style("stroke-width","5")
+                        .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                        .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
+                        .on("mouseover", function(){return tooltip.text("Your Electricity Usage").style("visibility", "visible");});
+
+
+
 }
+
+
