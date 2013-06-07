@@ -149,8 +149,8 @@ function fill_report_card(udata)
 		savings = savings * -1.0;
 	}
 
-	var text="<h3>Energy Report Card</h3>";
-	text+="<br/><h4>Total Energy Use: <span class='"+fracsign+"'>" + fracGrade + "</span></h4><p>Your household uses <span class='"+fracsign+"'>"+Math.round(frac*100.0)+"% "+fracsign+"</span> electricity that the neighborhood average.</p>";
+	var text="<h3>Electricity Report Card</h3>";
+	text+="<br/><h4>Total Electricity Use: <span class='"+fracsign+"'>" + fracGrade + "</span></h4><p>Your household uses <span class='"+fracsign+"'>"+Math.round(frac*100.0)+"% "+fracsign+"</span> electricity that the neighborhood average.</p>";
 	text += '<p>You <span class="'+fracsign+'">' + savingstext + 'save $' + Math.round(savings) + '</span> per year!</p><br/>'; 
 	text += '<p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavg) + ' kWh';
 	text += '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh</p><br/>';
