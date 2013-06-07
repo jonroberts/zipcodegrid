@@ -149,14 +149,14 @@ function fill_report_card(udata)
 		savings = savings * -1.0;
 	}
 
-	$("#energy_results > h2.title").text("Energy Report Card");
-	var text="<br/><h3>Total Energy Use: <span class='"+fracsign+"'>" + fracGrade + "</span></h3><p>Your household uses <span class='"+fracsign+"'>"+Math.round(frac*100.0)+"% "+fracsign+"</span> electricity that the neighborhood average.</p>";
+	var text="<h3>Energy Report Card</h3>";
+	text+="<br/><h4>Total Energy Use: <span class='"+fracsign+"'>" + fracGrade + "</span></h4><p>Your household uses <span class='"+fracsign+"'>"+Math.round(frac*100.0)+"% "+fracsign+"</span> electricity that the neighborhood average.</p>";
 	text += '<p>You <span class="'+fracsign+'">' + savingstext + 'save $' + Math.round(savings) + '</span> per year!</p><br/>'; 
 	text += '<p>Yearly household usage: ' + Math.round(udata["annual_usage"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavg) + ' kWh';
 	text += '<p>Yearly usage per person: ' + Math.round(udata["annual_usage"] / udata["num_in_house"]) + ' kWh vs. Neighborhood average: ' + Math.round(neighavgcapita) + ' kWh</p><br/>';
 	text += '<h3>Seasonal Modulation: <span class="'+seasmodtext+'">' + seasmodgrade + '</span></h3> <p>You use <span class="'+seasmodtext+'">' + Math.round(seasfrac*100) + '% ' + seasmodtext + '</span> electricity in the summer, relative to the winter,  compared to the U.S. average.</p><br/>';
 
-	$("#energy_results").append(text);
+	$("#report_card").html(text);
 
 
 
@@ -212,7 +212,7 @@ function constructDateInput(){
 		var yearString=(inLastYear)?" '"+(y-1):" '"+y;
 		
 		input.append($("<input>").attr('class',"date-input").attr('name',key).attr("placeholder",key+yearString));
-		if(i%4==3){console.log(i);input.append("<br/>");}
+		if(i%4==3){input.append("<br/>");}
 	}
 }
 

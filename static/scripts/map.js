@@ -326,7 +326,11 @@ function setSidebarContent(d){
 
 		content+="<p>Energy per household: "+(d.kwh_house).toFixed(0)+"kwh</p>";
 		color=getColorWithKey(d,"kwh_house");
-		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+"</span> of <span class='out_of'>175</span> </p>";
+		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_kwh_house).toFixed(0)+suffix(d.rank_kwh_house)+"</span></p>";
+
+		content+="<p>% of income on electricity: "+(d.E_pct_income).toFixed(0)+"%</p>";
+		color=getColorWithKey(d,"E_pct_income");
+		content+="<p style='text-align:center'><span class='ranking' style='color:"+color+"'>"+(d.rank_E_pct_income).toFixed(0)+suffix(d.rank_E_pct_income)+"</span></p>";
 	}  
 	$("#zip_details > div.content").html(content);
 	$("#zip_details").show();

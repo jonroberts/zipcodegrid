@@ -308,9 +308,12 @@ text.monthlyPlot {
 		<div class="content">
 			<p>Explore the map to learn about New York's energy use. To learn more:</p>
 			<ul class="options">
-			<li>&#9657; Hover over a zipcode</li>
 			<li>&#9657; Search for a zipcode</li>
+			<li>&#9657; Hover over a zipcode</li>
+			<li>&#9657; Click over a zipcode</li>
 			<li>&#9657; Change the data set</li>
+			</ul>
+			<ul>
 			<li>&#9657; <a href="#energy_comparison">See how you compare</a></li>
 			</ul>
 		</div>
@@ -393,7 +396,7 @@ $("#goto_least").click(function(){goto_least();return false;})
 <div id="energy_results_container" class="results">
 	<div class="pw_content">
 		<div id="energy_results">
-			<h2 class="title"></h2>
+			<!--<h2 class="title"></h2>-->
 			<div id="report_card"></div>
 			<div id="monthlyPlot"></div>
 		</div>
