@@ -173,7 +173,7 @@ function fill_report_card(udata)
 	var elecPred = new Array();	
 	var elecPredUncert = new Array();
 
-	alert(udata["zipcode_usage"]);
+//	alert(udata["zipcode_usage"]);
 
 	for (key in udata["us_monthly"])
 	{
@@ -194,11 +194,11 @@ function fill_report_card(udata)
 
 	for (key in udata["predicted_usage"])//["predicted_usage"])
 	{
-		elecPred[_dateKeys[key]] = udata["predicted_usage"][key];//*udata["annual_usage"]/12.0;
+		elecPred[key] = udata["predicted_usage"][key];//*udata["annual_usage"]/12.0;
 	}
 	for (key in udata["predicted_uncertainty"])//udata["predicted_uncertainty"])
 	{
-		elecPredUncert[_dateKeys[key]] = udata["predicted_uncertainty"][key];//*udata["annual_usage"]/12.0*0.1;
+		elecPredUncert[key] = udata["predicted_uncertainty"][key];//*udata["annual_usage"]/12.0*0.1;
 	}
 
 
