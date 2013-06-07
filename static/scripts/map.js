@@ -1,16 +1,41 @@
 
 var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1,"units":"kwh/person","num_decimal":0,
 					"questions":[
-						{"question":"this is a question","answer":"this is the answer","zipcode":"NY10012"},
-						{"question":"this is another question","answer":"this is an answer with a <a href='www.thisisatest.com' target=_blank>link answer</a>","zipcode":""} // this has no zipcode so will not jump to a location.
+						{"question":"Which New Yorkers use the most electricity?","answer":"It's Wall Street","zipcode":"MOST"},
+						{"question":"What's up with Central Park?","answer":"No one lives here - so there's no residential energy use.","zipcode":"NY00083"}
 					]},
-				"kwh_house":{"name":"Electricity use per household","max":0,"min":-1,"units":"kwh/house","num_decimal":0},
-				"E_pct_income":{"name":"% of income spent on electricity","max":0,"min":-1,"units":"percent of income","num_decimal":1},
-				"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1,"units":"tax credits per household","num_decimal":2},
-				"E_tot_density":{"name":"Electricity density - total","max":0,"min":-1,"units":"kwh/m^2","num_decimal":0},
-				"E_density":{"name":"Residential energy density","max":0,"min":-1,"units":" residential kwh/m^2","num_decimal":0},
-				"E_comm_density":{"name":"Commercial electricity density","max":0,"min":-1,"units":"commercial kwh/m^2","num_decimal":0},
-				"E_inst_density":{"name":"Institutional electricity density","max":0,"min":-1,"units":"institutional kwh/m^2","num_decimal":0}
+				"kwh_house":{"name":"Electricity use per household","max":0,"min":-1,"units":"kwh/house","num_decimal":0,
+					"questions":[
+						{"question":"Which households use the most?","answer":"","zipcode":"MOST"},
+						{'question': 'Why is this map different to the per person map?' , 'answer': 'Families tend to use less electricity per person.' , 'zip code': ''}
+					]},
+				"E_pct_income":{"name":"% of income spent on electricity","max":0,"min":-1,"units":"percent of income","num_decimal":1,
+					"questions":[
+						{"question":"Who spends the most of their income on electricity?","answer":"","zipcode":"MOST"},
+					]},
+				"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1,"units":"tax credits per household","num_decimal":2,
+					"questions":[
+						{"question":"Who gets the most renewable energy tax credits?","answer":"","zipcode":"MOST"},
+						{'question': 'Are you eligible for energy credits?' , 'answer': 'Go find out <a href=\"\">here</a>' , 'zip code': ''},
+					]},
+				"E_tot_density":{"name":"Electricity density - total","max":0,"min":-1,"units":"kwh/m^2","num_decimal":0,
+					"questions":[
+						{"question":"Where is the most electricity used?","answer":"","zipcode":"MOST"},
+						{'question': 'Is this how NYC looks from the sky?' , 'answer': 'Almost. Not all electricity becomes <a href="http://www.nasa.gov/multimedia/imagegallery/image_feature_2480.html" target=_blank>light</a>' , 'zip code': ''},
+						{'question': 'How much of the total usage comes from households?' , 'answer': 'That depends strongly on location. Compare the different density maps!' , 'zip code': ''} 
+					]},
+				"E_density":{"name":"Residential energy density","max":0,"min":-1,"units":" residential kwh/m^2","num_decimal":0,
+					"questions":[
+						{"question":"Where is the most residential electricity used?","answer":"","zipcode":"MOST"},
+					]},
+				"E_comm_density":{"name":"Commercial electricity density","max":0,"min":-1,"units":"commercial kwh/m^2","num_decimal":0,
+					"questions":[
+						{"question":"Where is the most electricity used by businesses?","answer":"","zipcode":"MOST"},
+					]},
+				"E_inst_density":{"name":"Institutional electricity density","max":0,"min":-1,"units":"institutional kwh/m^2","num_decimal":0,
+					"questions":[
+						{"question":"Where is the most electricity used by the city?","answer":"","zipcode":"MOST"},
+					]}
 				}
 
 var mapKeys=[];
@@ -195,19 +220,25 @@ function dragging(d){
 }
 
 function fill_questions(){
-	var qs=$("#extra_questions")
+	var qs=$("#questions");
+	var text=""
 	for(var i in map_details[map.current]["questions"]){
 		question=map_details[map.current]["questions"][i]["question"];
 		answer=map_details[map.current]["questions"][i]["answer"];
 		zipcode=map_details[map.current]["questions"][i]["zipcode"];
-		text=""
-		if(zipcode!=""){
-				text+="<li>&#9657; <a href='' onclick='zoom_to_zip(\"NY"+zipcode+"\");showAnswer();return false;'>"+question+"</a></li>";
-			}
-		else{text="<li>&#9657; <a href='' onclick='showAnswer(); return false;'>"+question+"</a></li>"}
+		console.log(question);
+		// set up the zoom behaviour
+		if(zipcode=="MOST"){text+="<li>&#9657; <a href='' onclick='goto_most();";}
+		else if(zipcode=="LEAST"){text+="<li>&#9657; <a href='' onclick='goto_least();";}
+		else if(zipcode!=undefined & zipcode!=""){text+="<li>&#9657; <a href='' onclick='zoom_to_zip(\""+zipcode+"\");";}
+		else{text+="<li>&#9657; <a href='' onclick='";}
 		
-		qs.append($("<option>").attr('value',key).attr('name',key).text(map_details[key]["name"]));
+		// now add the showAnswer function if the answer exists
+		if(answer!=""){text+="showAnswer(this.parentNode);return false;'>"+question+"</a><p class=\"answer\" style=\"display:none\">"+answer+"</p></li>";}
+		else{text+="return false;'>"+question+"</a></li>";}
+		
 	}
+	qs.html(text);
 }
 
 function zoom_in(){
@@ -357,4 +388,5 @@ function init(){
 	for(var key in map_details){sel.append($("<option>").attr('value',key).attr('name',key).text(map_details[key]["name"]));}
 	$('#map_picker').show();
 	constructDateInput();
+	fill_questions();
 }

@@ -21,6 +21,10 @@ function zip_chosen(input){
 	}
 }
 
+function showAnswer(q){
+	$(q).children(".answer").show();
+}
+
 function zoom_to_zip(zip_in){
 	var data=d3.select("#"+zip_in).datum();
 	click(data);
@@ -204,7 +208,6 @@ function fill_report_card(udata)
 
 	DrawLineChart(elecUser,elecUS,elecPred,elecPredUncert,udata["average_ratio"]);
 }
-
 
 
 var _dateKeys=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];

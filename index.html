@@ -293,6 +293,22 @@ text.monthlyPlotTitle {
     font-family: arial;
     font-size: 14pt;
 }
+
+ul#map_questions, ul#call_to_action{
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	-webkit-padding-start: 0px;
+}
+
+ul#map_questions li{
+	padding-left:0.7em;text-indent:-0.7em;
+}
+
+p.answer{
+	padding-left:0em;text-indent:0em;
+}
 </style>
 </head>
 <body onresize="resize()" onload="init();">
@@ -338,12 +354,10 @@ text.monthlyPlotTitle {
 		</div>
 
 		<ul class="options" id="map_questions">
-		<li>&#9657; <a href="" id="goto_most">Who uses the most?</a></li>
-		<li>&#9657; <a href="" id="goto_least">Who uses the least?</a></li>
-		<div id="extra_questions">
+		<div id="questions">
 		</div>
 		</ul>
-		<ul>
+		<ul id="call_to_action">
 		<li>&#9657; <a id="to_bottom" href="#energy_comparison">How do you compare?</a></li>
 		</ul>
 	</div>
@@ -401,17 +415,12 @@ $("#goto_least").click(function(){goto_least();return false;})
 	<div class="pw_content">
 		<div id="energy_results">
 			<!--<h2 class="title"></h2>-->
-			<div id="report_card"></div>
+			<div id="report_card"><h3>Enter your details above to get an energy report.</h3></div>
 			<div id="monthlyPlot"></div>
 		</div>
 	</div>
 </div>
-<div>
-<h3>How we analyse the data</h3>
-<p>We take data from x, y ,z. We do the following.</p>
-
-</div>
-<div class="footer" style="background: grey; height: 250px; border-top: 1px solid black;">
+<div class="footer" style="background: grey; height: 250px; border-top: 1px solid black; color: white">
 <div class="pw_content">
 
 <div>
@@ -427,8 +436,8 @@ $("#goto_least").click(function(){goto_least();return false;})
 </div>
 <div>
 <ul>
+<a href="http://nycbigapps.com/project/270/Energy-Zip">BigApps Project Page</a>
 <li><a href="mailto:admin@energyzip.org">Contact us</a></li>
-
 </ul>
 </div>
 
