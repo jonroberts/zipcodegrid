@@ -75,7 +75,7 @@ def get_estimate():
 	ratio, average_ratio, normalized_ratio, metric, annual_usage = analyze_user(monthly_data, usage_by_unit, US_norm)
 
 	pred_use, pred_uncert = predict_all_months(monthly_data, US_norm)
-	response=make_response(json.dumps({"num_in_house":num_in_house, "zipcode":zipcode, "us_monthly":US_norm, "ratio":ratio, "average_ratio":average_ratio, "normalized_ratio":normalized_ratio, "metric":metric, "annual_usage":annual_usage, "predicted_usage":pred_use.tolist(), "predicted_uncertainty":pred_uncert.tolist() }))
+	response=make_response(json.dumps({"num_in_house":num_in_house, "zipcode":zipcode, "us_monthly":US_norm, "ratio":ratio, "average_ratio":average_ratio, "normalized_ratio":normalized_ratio, "metric":metric, "annual_usage":annual_usage, "predicted_usage":pred_use, "predicted_uncertainty":pred_uncert, "zipcode_usage": usage_by_unit }))
 	response.headers.add("Access-Control-Allow-Origin","*")
 	return response
 
@@ -171,10 +171,10 @@ def predict_all_months(user, norm):
             Both outputs are arrays.
     """
     user_mean = mean(user.values())
-    usage_prediction  = []
+    usage_prediction  = {}
     for month in the_months():
-        usage_prediction.append(user_mean*(norm[month]/mean([norm[m] for m in user])))
-    usage_prediction = array(usage_prediction)
+        usage_prediction.append({month: user_mean*(norm[month]/mean([norm[m] for m in user])) })
+    #usage_prediction = array(usage_prediction)
 
     # estimate uncertainty
     trash, trash, n_ratio, trash, trash = analyze_user(user, 1., norm) # overall normalization doesn't matter if normalized_ratio is only needed
