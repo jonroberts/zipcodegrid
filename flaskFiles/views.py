@@ -44,13 +44,11 @@ def get_estimate():
 	# store the data
 	user = User.query.filter_by(ip = ip_address).first()
 	# add the user if they don't exist
-	print str(user)+" "+str(ip_address)+" "+str(zipcode)+" "+str(num_in_house)
 	if user is None:
 		
 		user = User(name = "", email = "", ip = ip_address, zip=zipcode, state="NY", num_in_house=num_in_house)
 		db.session.add(user)
 		db.session.commit()
-		return "added a user!"
 
 	# run through the last 12 months. If there's a data entry, then check for a bill object. If one doesn't exist, add it.
 	for i in range(1,13):
@@ -75,13 +73,11 @@ def get_estimate():
 		db.session.commit()
 
 	ratio, average_ratio, normalized_ratio, metric, annual_usage = analyze_user(monthly_data, usage_by_unit, US_norm)
+
 	pred_use, pred_uncert = predict_all_months(monthly_data, US_norm)
-	response=make_response(json.dumps({"num_in_house":num_in_house, "zipcode":zipcode, "us_monthly":US_norm, "ratio":ratio, "average_ratio":average_ratio, "normalized_ratio":normalized_ratio, "metric":metric, "annual_usage":annual_usage, "predicted_usage":pred_use, "predicted_uncertainty":pred_uncert }))
+	response=make_response(json.dumps({"num_in_house":num_in_house, "zipcode":zipcode, "us_monthly":US_norm, "ratio":ratio, "average_ratio":average_ratio, "normalized_ratio":normalized_ratio, "metric":metric, "annual_usage":annual_usage, "predicted_usage":pred_use.tolist(), "predicted_uncertainty":pred_uncert.tolist() }))
 	response.headers.add("Access-Control-Allow-Origin","*")
 	return response
-
-
-
 
 
 
@@ -184,7 +180,6 @@ def predict_all_months(user, norm):
     trash, trash, n_ratio, trash, trash = analyze_user(user, 1., norm) # overall normalization doesn't matter if normalized_ratio is only needed
     sigma_min = 0.1 # min sigma, to avoid some rare, crazy results
     usage_uncertainty = usage_prediction*max(sigma_min, std(1-array(n_ratio.values())))
-    print std(1-array(n_ratio.values()))
     return usage_prediction, usage_uncertainty
 
 
