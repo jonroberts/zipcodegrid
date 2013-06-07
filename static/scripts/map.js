@@ -16,7 +16,7 @@ var map_details={"kwh_pop":{"name":"Electricity use per person","max":0,"min":-1
 				"taxcredit_per_house":{"name":"Energy credits per household","max":0,"min":-1,"units":"tax credits per household","num_decimal":2,
 					"questions":[
 						{"question":"Who gets the most renewable energy tax credits?","answer":"","zipcode":"MOST"},
-						{'question': 'Are you eligible for energy credits?' , 'answer': 'Go find out <a href=\"\">here</a>' , 'zip code': ''},
+						{'question': 'Are you eligible for energy credits?' , 'answer': 'Go find out <a href=\"http://energy.gov/savings?rebate_eligibility=435541&rebate_savings_for=0&rebate_provider=0&rebate_state=2695\">here</a>' , 'zip code': ''},
 					]},
 				"E_tot_density":{"name":"Electricity density - total","max":0,"min":-1,"units":"kwh/m^2","num_decimal":0,
 					"questions":[
