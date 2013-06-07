@@ -71,13 +71,16 @@ function analyse_usage(form){
 		data[entry.name]=entry.value;
 		count+=1;
 	}
-	if(count<4){
-		$('#energy_error_message').html("Please enter data for at least 2 months");
+	if(count<3){
+		$('#energy_error_message').html("Please enter data for at least 3 months");
 		$('#energy_error').show();
 		return false;
 	}
-	
-	var urlString="http://www.ezip.jrsandbox.com/get_estimate"
+	if($("#record_data").is(":checked")){data["record_data"]=1;}
+	else{data["record_data"]=0;}
+
+	//var urlString="http://www.ezip.jrsandbox.com/get_estimate"
+	var urlString="http://energyzip.org/get_estimate"
 	var jhxr=$.ajax({
 		type:"GET",
 		url:urlString,
@@ -195,9 +198,9 @@ function fill_report_card(udata)
 		sss+=udata["ratio"][key]*udata["us_monthly"][key];
 		count++;
 	}
-	for (key in udata["ratio"])
+	for (key in udata["monthly_usage"])
 	{
-		elecUser[key] = udata["ratio"][key]*udata["us_monthly"][key]*udata["annual_usage"]/sss*(count/12.0);// *udata["annual_usage"];//
+		elecUser[key] = udata["monthly_usage"][key];//*udata["us_monthly"][key]*udata["annual_usage"]/sss*(count/12.0);// *udata["annual_usage"];//
 	}
 
 	for (key in udata["predicted_usage"])//["predicted_usage"])
