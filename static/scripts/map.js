@@ -389,4 +389,5 @@ function init(){
 	$('#map_picker').show();
 	constructDateInput();
 	fill_questions();
+	call_census_api();
 }
