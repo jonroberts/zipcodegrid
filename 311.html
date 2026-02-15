@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+<title>NYC 311 Data Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,200,700' rel='stylesheet' type='text/css'>
+<style>
+html, body, div, span, applet, object, iframe,
+blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    font-family: 'Roboto', helvetica, sans-serif;
+    font-weight: 300;
+    color: #434343;
+}
+body {
+    line-height: 1.4;
+    background: #f5f5f5;
+}
+* { box-sizing: border-box; }
+
+/* Navigation */
+.top-nav {
+    background: #2c3e50;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.top-nav a, .top-nav span {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 14px;
+}
+.top-nav .brand {
+    font-weight: 700;
+    font-size: 18px;
+    color: white;
+}
+.top-nav .nav-links a {
+    margin-left: 20px;
+    opacity: 0.8;
+}
+.top-nav .nav-links a:hover {
+    opacity: 1;
+}
+
+/* Main layout */
+.dashboard {
+    margin-top: 50px;
+    padding: 15px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-title {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #3498db;
+    color: #2c3e50;
+}
+
+.section-subtitle {
+    font-weight: 400;
+    font-size: 13px;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+}
+
+/* Grid layout */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -8px;
+}
+.col-half {
+    width: 50%;
+    padding: 0 8px;
+    margin-bottom: 16px;
+}
+.col-third {
+    width: 33.33%;
+    padding: 0 8px;
+    margin-bottom: 16px;
+}
+.col-full {
+    width: 100%;
+    padding: 0 8px;
+    margin-bottom: 16px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 16px;
+    height: 100%;
+}
+
+/* Map section */
+#map-container {
+    position: relative;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+#map-container svg {
+    display: block;
+}
+.background {
+    fill: none;
+    pointer-events: all;
+}
+#zips path {
+    stroke: #fff;
+    stroke-width: 0.8px;
+    cursor: pointer;
+}
+#zips path:hover {
+    stroke-width: 2px;
+    stroke: #2c3e50;
+}
+
+/* Map controls */
+.map-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+.map-controls label {
+    font-weight: 400;
+    font-size: 13px;
+    color: #555;
+}
+.map-controls select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 13px;
+    background: white;
+    font-family: 'Roboto', helvetica, sans-serif;
+    min-width: 200px;
+}
+.map-controls button {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+}
+.map-controls button:hover {
+    background: #ecf0f1;
+}
+
+/* Map tooltip */
+.map-tooltip {
+    position: absolute;
+    background: rgba(44,62,80,0.92);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    pointer-events: none;
+    display: none;
+    z-index: 100;
+    max-width: 280px;
+    line-height: 1.5;
+}
+.map-tooltip span { color: white; }
+.map-tooltip .tt-title { font-weight: 700; font-size: 13px; }
+.map-tooltip .tt-value { font-weight: 700; color: #3498db; }
+.map-tooltip .tt-rank { font-size: 11px; opacity: 0.8; }
+
+/* Color legend */
+.color-legend {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 11px;
+}
+.color-legend .gradient-bar {
+    flex: 1;
+    height: 14px;
+    margin: 0 8px;
+    border-radius: 2px;
+}
+.color-legend span { color: #666; }
+
+/* Zipcode detail panel */
+#zip-detail {
+    display: none;
+}
+#zip-detail.active {
+    display: block;
+}
+.detail-header {
+    font-weight: 700;
+    font-size: 16px;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+.detail-meta {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-bottom: 12px;
+}
+.detail-bars {
+    margin-top: 8px;
+}
+.detail-bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+.detail-bar-label {
+    width: 130px;
+    text-align: right;
+    padding-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.detail-bar-bg {
+    flex: 1;
+    height: 16px;
+    background: #ecf0f1;
+    border-radius: 2px;
+    overflow: hidden;
+}
+.detail-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s;
+}
+.detail-bar-value {
+    width: 55px;
+    padding-left: 6px;
+    font-size: 11px;
+    color: #555;
+}
+
+/* Correlation matrix */
+#corr-matrix {
+    overflow-x: auto;
+}
+.corr-table {
+    border-collapse: collapse;
+    font-size: 11px;
+}
+.corr-table th, .corr-table td {
+    padding: 3px 4px;
+    text-align: center;
+    border: 1px solid #eee;
+    min-width: 28px;
+}
+.corr-table th {
+    font-weight: 400;
+    font-size: 10px;
+    color: #555;
+    white-space: nowrap;
+    background: #fafafa;
+}
+.corr-table td {
+    font-size: 10px;
+    font-weight: 400;
+}
+.corr-table .row-header {
+    text-align: right;
+    background: #fafafa;
+    font-weight: 400;
+    padding-right: 6px;
+}
+
+/* Anomaly tables */
+.anomaly-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.anomaly-table th {
+    background: #fafafa;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 400;
+    color: #555;
+    border-bottom: 2px solid #e0e0e0;
+}
+.anomaly-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.anomaly-table tr:hover td {
+    background: #f8f9fa;
+}
+.badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+}
+.badge-high { background: #e74c3c; color: white; }
+.badge-low { background: #3498db; color: white; }
+.badge-over { background: #e67e22; color: white; }
+.badge-under { background: #27ae60; color: white; }
+
+/* Borough summary */
+.borough-bars { margin-top: 8px; }
+.borough-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.borough-label {
+    width: 100px;
+    font-size: 12px;
+    font-weight: 400;
+}
+.borough-bar-bg {
+    flex: 1;
+    height: 22px;
+    background: #ecf0f1;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+.borough-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s;
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+}
+.borough-bar-fill span {
+    color: white;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+/* Time series chart */
+#time-series-container svg {
+    display: block;
+}
+.ts-line {
+    fill: none;
+    stroke-width: 2;
+}
+.ts-axis text {
+    font-size: 11px;
+    fill: #666;
+}
+.ts-axis line, .ts-axis path {
+    stroke: #ccc;
+}
+.ts-grid line {
+    stroke: #eee;
+}
+
+/* Insights panel */
+.insight-item {
+    padding: 10px 12px;
+    border-left: 3px solid #3498db;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.insight-item strong {
+    font-weight: 700;
+    color: #2c3e50;
+}
+.insight-item .insight-category {
+    font-size: 11px;
+    color: #7f8c8d;
+    margin-top: 4px;
+}
+
+/* Tabs */
+.tab-buttons {
+    display: flex;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 12px;
+}
+.tab-btn {
+    padding: 6px 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: #7f8c8d;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    font-family: 'Roboto', helvetica, sans-serif;
+}
+.tab-btn.active {
+    color: #2c3e50;
+    border-bottom-color: #3498db;
+    font-weight: 400;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Stats row */
+.stats-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.stat-card {
+    flex: 1;
+    min-width: 150px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 12px;
+    text-align: center;
+}
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+.stat-label {
+    font-size: 11px;
+    color: #7f8c8d;
+    margin-top: 2px;
+}
+
+/* Category label colors */
+.cat-noise_residential { color: #e74c3c; }
+.cat-heat_hot_water { color: #e67e22; }
+.cat-illegal_parking { color: #f1c40f; }
+.cat-blocked_driveway { color: #2ecc71; }
+.cat-street_condition { color: #1abc9c; }
+.cat-noise_street { color: #3498db; }
+.cat-water_system { color: #9b59b6; }
+.cat-rodent { color: #8b4513; }
+.cat-dirty_conditions { color: #7f8c8d; }
+.cat-noise_commercial { color: #c0392b; }
+
+@media (max-width: 900px) {
+    .col-half, .col-third { width: 100%; }
+    .stats-row { flex-direction: column; }
+    .stat-card { min-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+    <span class="brand">NYC 311 Dashboard</span>
+    <div class="nav-links">
+        <a href="index.html">Energy Map</a>
+        <a href="311.html" style="opacity:1; font-weight:400;">311 Dashboard</a>
+    </div>
+</div>
+
+<div class="dashboard">
+    <!-- Summary stats -->
+    <div class="stats-row" id="stats-row"></div>
+
+    <!-- Map + Detail panel -->
+    <div class="row">
+        <div class="col-half" style="min-width: 55%;">
+            <div class="section-title">Population-Indexed Heat Map</div>
+            <div class="section-subtitle">Complaints per 1,000 residents by zipcode</div>
+            <div class="map-controls">
+                <label>Category:</label>
+                <select id="map-category-select"></select>
+                <button onclick="resetMapView()">Reset Zoom</button>
+            </div>
+            <div id="map-container">
+                <div class="map-tooltip" id="map-tooltip"></div>
+            </div>
+            <div class="color-legend">
+                <span>Low</span>
+                <div class="gradient-bar" id="legend-gradient"></div>
+                <span>High</span>
+            </div>
+        </div>
+        <div class="col-half" style="min-width: 40%;">
+            <div id="zip-welcome" class="card">
+                <div class="section-title">Zipcode Detail</div>
+                <p style="color:#7f8c8d; font-size:13px; margin-top:10px;">Click a zipcode on the map to see its 311 complaint breakdown, rankings, and monthly trends.</p>
+                <div style="margin-top: 20px;">
+                    <div class="section-title" style="font-size: 16px;">Borough Summary</div>
+                    <div id="borough-summary"></div>
+                </div>
+            </div>
+            <div id="zip-detail" class="card">
+                <div class="detail-header" id="detail-title"></div>
+                <div class="detail-meta" id="detail-meta"></div>
+                <div class="detail-bars" id="detail-bars"></div>
+                <div id="zip-timeseries" style="margin-top: 16px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Correlations + Anomalies -->
+    <div class="row">
+        <div class="col-half">
+            <div class="card">
+                <div class="section-title">Correlations</div>
+                <div class="section-subtitle">Pairwise correlations between complaint types and demographics</div>
+                <div id="corr-matrix"></div>
+                <div id="corr-insights" style="margin-top: 12px;"></div>
+            </div>
+        </div>
+        <div class="col-half">
+            <div class="card">
+                <div class="section-title">Key Insights</div>
+                <div class="section-subtitle">Auto-detected patterns and anomalies</div>
+                <div id="insights-panel"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Anomaly Detection -->
+    <div class="row">
+        <div class="col-full">
+            <div class="card">
+                <div class="section-title">Anomaly Detection</div>
+                <div class="section-subtitle">Unusual patterns by location, time, and complaint type</div>
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('spatial')">By Location</button>
+                    <button class="tab-btn" onclick="switchTab('temporal')">By Time</button>
+                    <button class="tab-btn" onclick="switchTab('type')">By Type</button>
+                </div>
+                <div class="tab-content active" id="tab-spatial"></div>
+                <div class="tab-content" id="tab-temporal"></div>
+                <div class="tab-content" id="tab-type"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Series -->
+    <div class="row">
+        <div class="col-full">
+            <div class="card">
+                <div class="section-title">Seasonal Patterns</div>
+                <div class="section-subtitle">Monthly complaint volumes across all categories (citywide)</div>
+                <div id="time-series-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center; padding: 20px; font-size: 12px; color: #999;">
+        <p>Data source: <a href="https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9" style="color:#3498db;">NYC Open Data - 311 Service Requests</a></p>
+        <p>Population data: Census 2010 | <a href="index.html" style="color:#3498db;">Back to Energy Map</a></p>
+    </div>
+</div>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="./static/data/zipcodes.js"></script>
+<script src="./static/data/zip_to_neighborhood.js"></script>
+<script src="./static/data/nyc_311_data.js"></script>
+<script src="./static/scripts/dashboard311.js"></script>
+</body>
+</html>

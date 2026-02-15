@@ -20,6 +20,11 @@ import random
 def index():
 	return render_template("index_flask.html")
 
+@app.route('/311')
+@app.route('/311-dashboard')
+def dashboard_311():
+	return render_template("311_flask.html")
+
 @app.route('/get_estimate')
 def get_estimate():
 	today = datetime.date.today()
